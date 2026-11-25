@@ -40,6 +40,7 @@ const initials = (wedding.initials || wedding.names.split(/\s*&\s*/).map((part) 
 // Day and month as written in the event's own offset (avoids the viewer's time zone).
 const isoDay = /^\d{4}-(\d{2})-(\d{2})/.exec(first?.startsAt || '')
 const flightNo = initials + (isoDay ? ' ' + isoDay[2] + isoDay[1] : '')
+const boardingTime = first?.time?.split(/[–-]/)[0]?.trim() || '-'
 const route = { from: wedding.route?.from || 'Sendiri', to: wedding.route?.to || 'Bersama' }
 
 /* ---------- cover & text ---------- */
@@ -48,6 +49,15 @@ document.querySelector('meta[name="description"]').content = 'Undangan pernikaha
 setText('[data-names]', wedding.names)
 setText('[data-initials]', initials)
 setText('[data-date]', wedding.shortDate || wedding.date)
+setText('[data-flight]', flightNo)
+setText('[data-boarding]', boardingTime)
+setText('[data-route-from]', route.from)
+setText('[data-route-to]', route.to)
+// Cover title: the "&" gets its own span so it can be styled; names stay plain text.
+for (const heading of document.querySelectorAll('.cover-names')) {
+  const parts = wedding.names.split(/\s*&\s*/)
+  if (parts.length === 2) heading.replaceChildren(parts[0] + ' ', el('span', { class: 'amp', text: '&' }), ' ' + parts[1])
+}
 
 const guest = (new URLSearchParams(location.search).get('to') || '').replace(/\s+/g, ' ').trim().slice(0, 80)
 if (guest) $('guest').textContent = guest
@@ -97,7 +107,7 @@ const grid = $('flight-grid')
 grid.append(
   labelled('FLIGHT', 'Nomor', flightNo),
   labelled('DATE', 'Tanggal', wedding.shortDate || wedding.date),
-  labelled('BOARDING', 'Jam Mulai', first?.time?.split(/[–-]/)[0]?.trim() || '-'),
+  labelled('BOARDING', 'Jam Mulai', boardingTime),
   labelled('GATE', 'Lokasi Acara', first?.venue || '-'),
   labelled('SEAT', 'Tempat Duduk', 'VIP'),
 )

@@ -26,29 +26,50 @@
 <div class="stage">
   <!-- 1 · Cover -->
   <header class="cover" id="sampul">
-    <div class="cover-sky" aria-hidden="true"><svg class="cover-plane"><use href="#i-plane"/></svg></div>
-    <div class="ticket ticket-cover has-stub" id="cover-ticket">
-      <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
-      <div class="ticket-main">
-        <h1 class="cover-names" data-names></h1>
-        <div class="field">
-          <p class="label">PASSENGER</p>
-          <p class="caption">Kepada Yth. Bapak/Ibu/Saudara/i</p>
-          <p class="value guest" id="guest">Tamu Undangan</p>
+    <div class="cover-sky" aria-hidden="true">
+      <span class="cover-sun"></span>
+      <svg class="cover-flight" viewBox="0 0 160 60"><path class="trail" d="M4 54 C 50 50, 96 34, 132 14"/><use href="#i-plane" x="128" y="0" width="26" height="26" transform="rotate(30 141 13)"/></svg>
+      <svg class="cover-plane far"><use href="#i-plane"/></svg>
+    </div>
+    <div class="cover-inner">
+      <p class="cover-eyebrow"><span class="label">THE WEDDING OF</span><span class="caption">Undangan Pernikahan</span></p>
+      <div class="ticket ticket-cover has-stub" id="cover-ticket">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
+        <div class="ticket-main">
+          <div class="cover-route">
+            <div><p class="label">FROM</p><p class="caption">Asal</p><p class="city" data-route-from></p></div>
+            <span class="route-line" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <div><p class="label">TO</p><p class="caption">Tujuan</p><p class="city" data-route-to></p></div>
+          </div>
+          <h1 class="cover-names" data-names></h1>
+          <div class="cover-grid">
+            <div class="field"><p class="label">FLIGHT</p><p class="caption">Nomor</p><p class="value" data-flight></p></div>
+            <div class="field"><p class="label">DATE</p><p class="caption">Tanggal</p><p class="value" data-date></p></div>
+            <div class="field"><p class="label">BOARDING</p><p class="caption">Jam</p><p class="value" data-boarding></p></div>
+          </div>
+          <div class="field cover-passenger">
+            <p class="label">PASSENGER</p>
+            <p class="caption">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+            <p class="value guest" id="guest">Tamu Undangan</p>
+          </div>
+          <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
         </div>
-        <div class="field">
-          <p class="label">DATE</p>
-          <p class="caption">Tanggal</p>
-          <p class="value" data-date></p>
+        <div class="ticket-stub" id="cover-stub">
+          <div class="stub-row">
+            <span class="barcode" aria-hidden="true"></span>
+            <svg class="cover-seal" viewBox="0 0 100 100" aria-hidden="true">
+              <defs><path id="seal-ring" d="M50 50 m-36 0 a36 36 0 1 1 72 0 a36 36 0 1 1 -72 0"/></defs>
+              <circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="27"/>
+              <text><textPath href="#seal-ring" textLength="222" lengthAdjust="spacing">SAVE THE DATE · SAVE THE DATE ·</textPath></text>
+              <use href="#i-plane" x="38" y="38" width="24" height="24"/>
+            </svg>
+          </div>
+          <button class="btn btn-primary btn-checkin" id="open-invitation" type="button">
+            <span class="btn-label">CHECK-IN</span>
+            <span class="btn-caption">Buka Undangan</span>
+            <svg class="ico" aria-hidden="true"><use href="#i-plane"/></svg>
+          </button>
         </div>
-        <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
-      </div>
-      <div class="ticket-stub" id="cover-stub">
-        <span class="barcode" aria-hidden="true"></span>
-        <button class="btn btn-primary" id="open-invitation" type="button">
-          <span class="btn-label">CHECK-IN</span>
-          <span class="btn-caption">Buka Undangan</span>
-        </button>
       </div>
     </div>
     <button class="skip" id="skip-opener" type="button" hidden>Lewati animasi</button>
