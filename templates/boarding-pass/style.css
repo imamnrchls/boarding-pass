@@ -415,7 +415,8 @@ body.motion .board-status .label::before { animation: blink 1.6s ease-in-out inf
 .photo img { aspect-ratio: 1; object-fit: cover; object-position: 50% 25%; width: 100%; outline: 1px solid rgba(0,0,0,.06); }
 .photo.wide { grid-column: 1 / -1; }
 .photo.wide img { aspect-ratio: 3 / 2; }
-.photo.wide.portrait img { aspect-ratio: 1; object-position: 50% 15%; } /* a tall photo in a wide slot: keep the face */
+.photo.wide.portrait { justify-self: center; width: 62%; } /* a tall (often small) photo in a wide slot: don't stretch it */
+.photo.wide.portrait img { aspect-ratio: 4 / 5; object-position: 50% 15%; }
 .passport-hint { margin-top: 1rem; text-align: center; font-size: .8rem; color: var(--ink-muted); }
 
 /* 6 · check-in */
