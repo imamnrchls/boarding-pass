@@ -184,8 +184,10 @@
     <!-- 6 · Check-in (RSVP) & Flight Log -->
     <section class="section" id="checkin" tabindex="-1" aria-labelledby="checkin-title">
       <h2 class="title" id="checkin-title"><span class="label">CHECK-IN</span><span class="caption">Konfirmasi Kehadiran</span></h2>
-      <p class="note" id="reply-by" hidden></p>
-      <p class="note" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
+      <div class="checkin-notes">
+        <p class="chip" id="reply-by" hidden></p>
+        <p class="chip demo" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
+      </div>
       <div class="ticket ticket-form">
         <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span>CHECK-IN COUNTER</span><span>FORM</span></div>
         <form id="reply" novalidate>
@@ -197,9 +199,9 @@
           <fieldset class="form-field">
             <legend><span class="label">STATUS</span><span class="caption">Kehadiran</span></legend>
             <div class="choices">
-              <label><input type="radio" name="att" value="y" required><span>Hadir</span></label>
-              <label><input type="radio" name="att" value="m"><span>Masih ragu</span></label>
-              <label><input type="radio" name="att" value="n"><span>Tidak hadir</span></label>
+              <label class="choice-y"><input type="radio" name="att" value="y" required><span class="mark" aria-hidden="true"></span><span>Hadir</span></label>
+              <label class="choice-m"><input type="radio" name="att" value="m"><span class="mark" aria-hidden="true"></span><span>Masih ragu</span></label>
+              <label class="choice-n"><input type="radio" name="att" value="n"><span class="mark" aria-hidden="true"></span><span>Tidak hadir</span></label>
             </div>
             <p class="error" id="e-att" hidden>Pilih status kehadiran.</p>
           </fieldset>
@@ -211,14 +213,18 @@
           </div>
           <div class="form-field msg-field">
             <label for="f-msg"><span class="label">MESSAGE</span><span class="caption">Ucapan &amp; doa (opsional)</span></label>
-            <textarea id="f-msg" name="msg" rows="4" maxlength="500"></textarea>
+            <textarea id="f-msg" name="msg" rows="4" maxlength="500" placeholder="Tulis doa terbaik untuk kedua mempelai…" aria-describedby="msg-count"></textarea>
+            <p class="counter" id="msg-count"><span id="msg-len">0</span>/500</p>
             <div class="stamp" id="stamp" hidden aria-hidden="true"><span>CONFIRMED</span></div>
           </div>
           <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-          <button class="btn btn-primary" id="reply-send" type="submit">
-            <span class="btn-label">CONFIRM</span><span class="btn-caption">Kirim Konfirmasi</span>
-          </button>
-          <p class="status" id="reply-status" role="status" aria-live="polite"></p>
+          <div class="form-stub">
+            <button class="btn btn-primary" id="reply-send" type="submit">
+              <span class="btn-label">CONFIRM</span><span class="btn-caption">Kirim Konfirmasi</span>
+              <svg class="ico" aria-hidden="true"><use href="#i-plane"/></svg>
+            </button>
+            <p class="status" id="reply-status" role="status" aria-live="polite"></p>
+          </div>
         </form>
       </div>
       <p class="note" id="reply-closed" hidden>Formulir konfirmasi belum tersedia.</p>
@@ -226,9 +232,12 @@
       <div id="log-block" hidden>
         <h2 class="title"><span class="label">FLIGHT LOG</span><span class="caption">Doa &amp; Ucapan</span></h2>
         <div class="tally" id="tally" hidden>
-          <p><strong id="count-y">0</strong><span>Hadir</span></p>
-          <p><strong id="count-m">0</strong><span>Ragu</span></p>
-          <p><strong id="count-n">0</strong><span>Tidak</span></p>
+          <p class="tally-head"><span class="label">PASSENGER MANIFEST</span><span class="caption">Rekap konfirmasi</span></p>
+          <div class="tally-cells">
+            <p class="y"><strong id="count-y">0</strong><span>Hadir</span></p>
+            <p class="m"><strong id="count-m">0</strong><span>Ragu</span></p>
+            <p class="n"><strong id="count-n">0</strong><span>Tidak</span></p>
+          </div>
         </div>
         <ol class="log" id="wishes" aria-label="Ucapan tamu"></ol>
       </div>

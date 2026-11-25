@@ -358,7 +358,7 @@ const store = {
   write(list) { localStorage.setItem(storeKey, JSON.stringify(list.slice(0, 50))) },
 }
 if (wedding.replyBy) {
-  $('reply-by').textContent = 'Mohon konfirmasi sebelum ' + wedding.replyBy + '.'
+  $('reply-by').append(icon('cal'), el('span', { text: 'Mohon konfirmasi sebelum ' + wedding.replyBy + '.' }))
   $('reply-by').hidden = false
 }
 if (guest) form.elements.name.value = guest.slice(0, 60)
@@ -384,15 +384,18 @@ function renderLog({ wishes, counts }) {
   const list = $('wishes')
   list.replaceChildren()
   const shown = wishes.filter((w) => w.msg).slice(0, 50)
-  if (!shown.length) list.append(el('li', { class: 'empty', text: 'Belum ada ucapan. Jadilah yang pertama.' }))
+  if (!shown.length) list.append(el('li', { class: 'empty' }, icon('plane'), el('span', { text: 'Belum ada ucapan. Jadilah yang pertama.' })))
   for (const wish of shown) {
-    list.append(el('li', {},
-      el('p', { class: 'log-head' },
-        el('time', { dateTime: new Date(wish.ts).toISOString(), title: ago(wish.ts), text: logTime(wish.ts) }),
-        el('strong', { text: wish.name }),
-        el('span', { class: 'badge ' + wish.att, text: attLabel[wish.att] || '' }),
+    list.append(el('li', { class: 'att-' + wish.att },
+      el('span', { class: 'avatar', 'aria-hidden': 'true', text: Array.from(String(wish.name).trim())[0]?.toUpperCase() || '?' }),
+      el('div', { class: 'log-body' },
+        el('p', { class: 'log-head' },
+          el('strong', { text: wish.name }),
+          el('span', { class: 'badge ' + wish.att, text: attLabel[wish.att] || '' }),
+        ),
+        el('p', { class: 'log-msg', text: wish.msg }),
+        el('time', { dateTime: new Date(wish.ts).toISOString(), title: logTime(wish.ts), text: ago(wish.ts) }),
       ),
-      el('p', { text: wish.msg }),
     ))
   }
 }
@@ -431,6 +434,8 @@ const syncGuests = () => {
   $('guests-field').hidden = att === 'n'
 }
 form.addEventListener('change', syncGuests)
+const syncCount = () => { $('msg-len').textContent = form.elements.msg.value.length }
+form.elements.msg.addEventListener('input', syncCount)
 
 function validate() {
   const name = form.elements.name.value.trim()
@@ -471,6 +476,7 @@ if (!endpoint && !wedding.demo) {
       status.className = 'status ok'
       status.textContent = 'Terima kasih, konfirmasi Anda sudah kami terima.'
       form.elements.msg.value = ''
+      syncCount()
       showStamp(true)
       loadLog()
     } catch {
