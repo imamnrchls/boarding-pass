@@ -40,7 +40,13 @@ const initials = (wedding.initials || wedding.names.split(/\s*&\s*/).map((part) 
 // Day and month as written in the event's own offset (avoids the viewer's time zone).
 const isoDay = /^\d{4}-(\d{2})-(\d{2})/.exec(first?.startsAt || '')
 const flightNo = initials + (isoDay ? ' ' + isoDay[2] + isoDay[1] : '')
-const boardingTime = first?.time?.split(/[–-]/)[0]?.trim() || '-'
+// "09.00–10.00 WIB" → { from: '09.00', to: '10.00 WIB' }; "Pukul 19.00 WIB s.d. selesai" → { from: '19.00 WIB', to: 'Selesai' }.
+const splitTime = (time = '') => {
+  const [from, to] = time.replace(/^\s*pukul\s+/i, '').split(/\s*(?:[–-]|\bs\.?\s?d\.?|\bsampai\b)\s*/i)
+  const cap = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+  return to ? { from: from.trim(), to: cap(to.trim()) } : { from: from.trim(), to: '' }
+}
+const boardingTime = splitTime(first?.time).from || '-'
 const route = { from: wedding.route?.from || 'Sendiri', to: wedding.route?.to || 'Bersama' }
 
 /* ---------- cover & text ---------- */
@@ -138,11 +144,6 @@ function icsFile(event, start, end) {
     'END:VEVENT', 'END:VCALENDAR',
   ].join('\r\n')
   return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body)
-}
-// "09.00–10.00 WIB" → { from: '09.00', to: '10.00 WIB' }; anything else stays whole.
-const splitTime = (time = '') => {
-  const [from, to] = time.split(/\s*[–-]\s*/)
-  return to ? { from, to } : { from: time, to: '' }
 }
 const duration = (ms) => {
   const minutes = Math.round(ms / 60000)
