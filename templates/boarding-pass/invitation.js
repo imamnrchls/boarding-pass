@@ -54,7 +54,7 @@ setText('[data-boarding]', boardingTime)
 setText('[data-route-from]', route.from)
 setText('[data-route-to]', route.to)
 // Cover title: the "&" gets its own span so it can be styled; names stay plain text.
-for (const heading of document.querySelectorAll('.cover-names')) {
+for (const heading of document.querySelectorAll('.cover-names, .closing-names')) {
   const parts = wedding.names.split(/\s*&\s*/)
   if (parts.length === 2) heading.replaceChildren(parts[0] + ' ', el('span', { class: 'amp', text: '&' }), ' ' + parts[1])
 }
@@ -315,33 +315,38 @@ const accounts = wedding.giftAccounts || []
 if (accounts.length || wedding.giftAddress) {
   $('gift').hidden = false
   $('gift-text').textContent = wedding.gift || ''
-  accounts.forEach((account) => {
-    const copy = el('button', { class: 'btn btn-ghost small copy', type: 'button', text: 'Salin', 'aria-label': 'Salin nomor ' + account.bank })
+  // Luggage tag: coloured side strip with a bag code, main panel with the details, barcode + action at the foot.
+  const tag = (index, label, caption, value, holder, action) => el('div', { class: 'tag reveal' },
+    el('div', { class: 'tag-side', 'aria-hidden': 'true' }, el('span', { text: 'BAG ' + pad(index + 1) })),
+    el('div', { class: 'tag-main' },
+      el('p', { class: 'label', text: label }),
+      el('p', { class: 'caption', text: caption }),
+      el('p', { class: 'value number', text: value }),
+      el('p', { class: 'holder', text: holder }),
+      el('div', { class: 'tag-foot' }, el('span', { class: 'barcode', 'aria-hidden': 'true' }), action),
+    ),
+  )
+  accounts.forEach((account, index) => {
+    const copy = el('button', { class: 'btn btn-ghost small copy', type: 'button', 'aria-label': 'Salin nomor ' + account.bank })
+    const setLabel = (text) => copy.replaceChildren(icon('copy'), text)
+    setLabel('Salin')
     copy.addEventListener('click', async () => {
       const digits = account.number.replace(/\s+/g, '')
       try {
         await navigator.clipboard.writeText(digits)
-        copy.textContent = 'Tersalin ✓'
+        setLabel('Tersalin ✓')
+        copy.classList.add('done')
       } catch {
-        copy.textContent = digits
+        setLabel(digits)
       }
-      setTimeout(() => { copy.textContent = 'Salin' }, 2200)
+      setTimeout(() => { setLabel('Salin'); copy.classList.remove('done') }, 2200)
     })
-    $('gift-list').append(el('div', { class: 'tag reveal' },
-      el('p', { class: 'label', text: 'BAGGAGE TAG' }),
-      el('p', { class: 'caption', text: account.bank }),
-      el('p', { class: 'value number', text: account.number }),
-      el('p', { class: 'holder', text: 'a.n. ' + account.holder }),
-      copy,
-    ))
+    $('gift-list').append(tag(index, 'BAGGAGE TAG', account.bank, account.number, 'a.n. ' + account.holder, copy))
   })
   if (wedding.giftAddress) {
-    $('gift-list').append(el('div', { class: 'tag reveal' },
-      el('p', { class: 'label', text: 'DELIVERY' }),
-      el('p', { class: 'caption', text: 'Alamat kirim kado' }),
-      el('p', { class: 'value', text: wedding.giftAddress.recipient }),
-      el('p', { class: 'holder', text: wedding.giftAddress.address }),
-    ))
+    const delivery = tag(accounts.length, 'DELIVERY', 'Alamat kirim kado', wedding.giftAddress.recipient, wedding.giftAddress.address, null)
+    delivery.classList.add('delivery')
+    $('gift-list').append(delivery)
   }
 }
 

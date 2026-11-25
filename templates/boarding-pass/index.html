@@ -22,6 +22,8 @@
   <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
   <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 5.5v-1A1.5 1.5 0 0 0 14 3H5a1.5 1.5 0 0 0-1.5 1.5V14A1.5 1.5 0 0 0 5 15.5h1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><path d="M4 11h16v9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5ZM3 7.5h18V11H3ZM12 7.5V21M12 7.5S10.5 3 8 3.5 7 7.5 12 7.5Zm0 0s1.5-4.5 4-4-1 4-4 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 </svg>
 
@@ -245,17 +247,22 @@
 
     <!-- 7 · Gift Baggage & Penutup -->
     <section class="section" id="gift" tabindex="-1" aria-labelledby="gift-title" hidden>
+      <span class="gift-ico" aria-hidden="true"><svg><use href="#i-gift"/></svg></span>
       <h2 class="title" id="gift-title"><span class="label">GIFT BAGGAGE</span><span class="caption">Tanda Kasih</span></h2>
       <p class="lede" id="gift-text"></p>
       <div class="tags" id="gift-list"></div>
     </section>
 
     <section class="section closing" id="penutup">
-      <svg class="closing-plane" aria-hidden="true"><use href="#i-plane"/></svg>
-      <p class="closing-title"><span class="label">THANK YOU FOR FLYING WITH US</span><span class="caption">Terima kasih atas doa &amp; kehadirannya</span></p>
-      <p class="lede" id="closing-text"></p>
-      <p class="caption">Kami yang berbahagia</p>
-      <p class="closing-names" data-names></p>
+      <div class="closing-card">
+        <svg class="closing-plane" aria-hidden="true"><use href="#i-plane"/></svg>
+        <p class="closing-badge" aria-hidden="true">ARRIVED · <span data-flight></span></p>
+        <p class="closing-title"><span class="label">THANK YOU FOR FLYING WITH US</span><span class="caption">Terima kasih atas doa &amp; kehadirannya</span></p>
+        <p class="lede" id="closing-text"></p>
+        <p class="closing-sign">Kami yang berbahagia</p>
+        <p class="closing-names" data-names></p>
+        <p class="closing-date" data-date-full></p>
+      </div>
     </section>
   </main>
 
