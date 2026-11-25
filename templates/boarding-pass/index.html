@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id" data-theme="boarding-pass">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Undangan pernikahan.">
+  <meta name="theme-color" content="#2F6FD6">
+  <title>Undangan Pernikahan</title>
+  <link rel="icon" href="./templates/boarding-pass/assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./templates/boarding-pass/assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="./templates/boarding-pass/style.css">
+  <script type="module" src="./templates/boarding-pass/invitation.js"></script>
+</head>
+<body class="locked">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M21.5 15.5v-2l-8-5V3.2a1.5 1.5 0 0 0-3 0v5.3l-8 5v2l8-2.5v5l-2 1.5V21l3.5-1 3.5 1v-1.5l-2-1.5v-5l8 2.5Z" fill="currentColor"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" fill="currentColor"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4.5h14A1.5 1.5 0 0 1 20.5 6v13a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V6A1.5 1.5 0 0 1 5 4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="stage">
+  <!-- 1 · Cover -->
+  <header class="cover" id="sampul">
+    <div class="cover-sky" aria-hidden="true"><svg class="cover-plane"><use href="#i-plane"/></svg></div>
+    <div class="ticket ticket-cover has-stub" id="cover-ticket">
+      <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
+      <div class="ticket-main">
+        <h1 class="cover-names" data-names></h1>
+        <div class="field">
+          <p class="label">PASSENGER</p>
+          <p class="caption">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+          <p class="value guest" id="guest">Tamu Undangan</p>
+        </div>
+        <div class="field">
+          <p class="label">DATE</p>
+          <p class="caption">Tanggal</p>
+          <p class="value" data-date></p>
+        </div>
+        <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
+      </div>
+      <div class="ticket-stub" id="cover-stub">
+        <span class="barcode" aria-hidden="true"></span>
+        <button class="btn btn-primary" id="open-invitation" type="button">
+          <span class="btn-label">CHECK-IN</span>
+          <span class="btn-caption">Buka Undangan</span>
+        </button>
+      </div>
+    </div>
+    <button class="skip" id="skip-opener" type="button" hidden>Lewati animasi</button>
+  </header>
+
+  <main id="isi">
+    <!-- 3 · Pembuka & Crew -->
+    <section class="section" id="crew" tabindex="-1" aria-labelledby="crew-title">
+      <blockquote class="quote-card reveal"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
+      <p class="lede" id="invite-line"></p>
+      <h2 class="title" id="crew-title"><span class="label">THE CREW</span><span class="caption">Mempelai</span></h2>
+      <div class="crew" id="couple"></div>
+      <a class="btn btn-ghost" href="#itinerary"><svg class="ico"><use href="#i-pin"/></svg>Lihat Jadwal &amp; Lokasi</a>
+    </section>
+
+    <!-- 4b · Menu mini -->
+    <nav class="tabs" aria-label="Navigasi undangan">
+      <a href="#itinerary"><span class="label">INFO</span><span class="caption">Jadwal</span></a>
+      <a href="#route" id="tab-route"><span class="label">ROUTE</span><span class="caption">Kisah</span></a>
+      <a href="#checkin"><span class="label">CHECK-IN</span><span class="caption">Konfirmasi</span></a>
+    </nav>
+
+    <!-- 4 · Flight Info & Itinerary -->
+    <section class="section" id="itinerary" tabindex="-1" aria-labelledby="itinerary-title">
+      <h2 class="title" id="itinerary-title"><span class="label">ITINERARY</span><span class="caption">Jadwal Acara</span></h2>
+      <div class="ticket ticket-info has-stub reveal">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
+        <div class="ticket-main">
+          <div class="route-big">
+            <div><p class="label">FROM</p><p class="caption">Asal</p><p class="city" id="route-from"></p></div>
+            <span class="route-line" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <div><p class="label">TO</p><p class="caption">Tujuan</p><p class="city" id="route-to"></p></div>
+          </div>
+          <div class="grid" id="flight-grid"></div>
+        </div>
+        <div class="ticket-stub">
+          <div class="field"><p class="label">PASSENGER</p><p class="caption">Nama Tamu</p><p class="value" data-guest></p></div>
+          <span class="barcode" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="board reveal" id="countdown" role="timer" aria-label="Hitung mundur menuju acara" hidden>
+        <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
+        <div class="board-cells">
+          <div><strong data-unit="days">00</strong><span>Hari</span></div>
+          <div><strong data-unit="hours">00</strong><span>Jam</span></div>
+          <div><strong data-unit="minutes">00</strong><span>Menit</span></div>
+          <div><strong data-unit="seconds">00</strong><span>Detik</span></div>
+        </div>
+      </div>
+      <p class="board-done" id="countdown-done" hidden></p>
+      <p class="note" id="attendance-note" hidden></p>
+      <div class="segments" id="events"></div>
+      <div class="dress" id="dress" hidden>
+        <p><span class="label">DRESS CODE</span><span class="caption">Busana</span></p>
+        <p id="dress-note"></p>
+        <ul class="swatches" id="dress-colors"></ul>
+      </div>
+    </section>
+
+    <!-- 5 · Flight Route & Galeri -->
+    <section class="section" id="route" tabindex="-1" aria-labelledby="route-title">
+      <div id="story-block" hidden>
+        <h2 class="title" id="route-title"><span class="label">FLIGHT ROUTE</span><span class="caption">Kisah Kami</span></h2>
+        <ol class="route" id="chapters"></ol>
+        <p class="route-end" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
+      </div>
+      <div id="gallery-block" hidden>
+        <h2 class="title"><span class="label">TRAVEL PHOTOS</span><span class="caption">Galeri</span></h2>
+        <div class="gallery" id="photos"></div>
+      </div>
+    </section>
+
+    <!-- 6 · Check-in (RSVP) & Flight Log -->
+    <section class="section" id="checkin" tabindex="-1" aria-labelledby="checkin-title">
+      <h2 class="title" id="checkin-title"><span class="label">CHECK-IN</span><span class="caption">Konfirmasi Kehadiran</span></h2>
+      <p class="note" id="reply-by" hidden></p>
+      <p class="note" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
+      <div class="ticket ticket-form">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span>CHECK-IN COUNTER</span><span>FORM</span></div>
+        <form id="reply" novalidate>
+          <div class="form-field">
+            <label for="f-name"><span class="label">PASSENGER NAME</span><span class="caption">Nama</span></label>
+            <input id="f-name" name="name" autocomplete="name" maxlength="60" required aria-describedby="e-name">
+            <p class="error" id="e-name" hidden>Nama wajib diisi.</p>
+          </div>
+          <fieldset class="form-field">
+            <legend><span class="label">STATUS</span><span class="caption">Kehadiran</span></legend>
+            <div class="choices">
+              <label><input type="radio" name="att" value="y" required><span>Hadir</span></label>
+              <label><input type="radio" name="att" value="m"><span>Masih ragu</span></label>
+              <label><input type="radio" name="att" value="n"><span>Tidak hadir</span></label>
+            </div>
+            <p class="error" id="e-att" hidden>Pilih status kehadiran.</p>
+          </fieldset>
+          <div class="form-field" id="guests-field">
+            <label for="f-guests"><span class="label">PAX</span><span class="caption">Jumlah tamu (1–5)</span></label>
+            <select id="f-guests" name="guests">
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+          </div>
+          <div class="form-field msg-field">
+            <label for="f-msg"><span class="label">MESSAGE</span><span class="caption">Ucapan &amp; doa (opsional)</span></label>
+            <textarea id="f-msg" name="msg" rows="4" maxlength="500"></textarea>
+            <div class="stamp" id="stamp" hidden aria-hidden="true"><span>CONFIRMED</span></div>
+          </div>
+          <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+          <button class="btn btn-primary" id="reply-send" type="submit">
+            <span class="btn-label">CONFIRM</span><span class="btn-caption">Kirim Konfirmasi</span>
+          </button>
+          <p class="status" id="reply-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <p class="note" id="reply-closed" hidden>Formulir konfirmasi belum tersedia.</p>
+
+      <div id="log-block" hidden>
+        <h2 class="title"><span class="label">FLIGHT LOG</span><span class="caption">Doa &amp; Ucapan</span></h2>
+        <div class="tally" id="tally" hidden>
+          <p><strong id="count-y">0</strong><span>Hadir</span></p>
+          <p><strong id="count-m">0</strong><span>Ragu</span></p>
+          <p><strong id="count-n">0</strong><span>Tidak</span></p>
+        </div>
+        <ol class="log" id="wishes" aria-label="Ucapan tamu"></ol>
+      </div>
+    </section>
+
+    <!-- 7 · Gift Baggage & Penutup -->
+    <section class="section" id="gift" tabindex="-1" aria-labelledby="gift-title" hidden>
+      <h2 class="title" id="gift-title"><span class="label">GIFT BAGGAGE</span><span class="caption">Tanda Kasih</span></h2>
+      <p class="lede" id="gift-text"></p>
+      <div class="tags" id="gift-list"></div>
+    </section>
+
+    <section class="section closing" id="penutup">
+      <svg class="closing-plane" aria-hidden="true"><use href="#i-plane"/></svg>
+      <p class="closing-title"><span class="label">THANK YOU FOR FLYING WITH US</span><span class="caption">Terima kasih atas doa &amp; kehadirannya</span></p>
+      <p class="lede" id="closing-text"></p>
+      <p class="caption">Kami yang berbahagia</p>
+      <p class="closing-names" data-names></p>
+    </section>
+  </main>
+
+  <footer class="credit">
+    <p>Made with love for our special day</p>
+    <p>by <a href="https://lembarkabar.web.id/" target="_blank" rel="noopener">Lembar Kabar</a></p>
+  </footer>
+
+  <button class="music" id="music" type="button" aria-pressed="false" aria-label="Putar musik" hidden><svg><use href="#i-note"/></svg></button>
+</div>
+
+<dialog class="viewer" id="viewer" aria-label="Galeri foto">
+  <button class="viewer-close" id="viewer-close" type="button" aria-label="Tutup">×</button>
+  <img id="viewer-img" alt="">
+  <div class="viewer-nav"><button id="viewer-prev" type="button" aria-label="Foto sebelumnya">‹</button><span id="viewer-pos" aria-live="polite"></span><button id="viewer-next" type="button" aria-label="Foto berikutnya">›</button></div>
+</dialog>
+<noscript><p style="padding:2rem;text-align:center">Aktifkan JavaScript untuk membuka undangan ini.</p></noscript>
+</body>
+</html>
