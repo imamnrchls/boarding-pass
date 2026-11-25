@@ -25,9 +25,9 @@
   <!-- 1 · Cover -->
   <header class="cover" id="sampul">
     <div class="cover-sky" aria-hidden="true"><svg class="cover-plane"><use href="#i-plane"/></svg></div>
-    <div class="ticket ticket-cover" id="cover-ticket">
+    <div class="ticket ticket-cover has-stub" id="cover-ticket">
+      <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
       <div class="ticket-main">
-        <p class="airline"><span data-initials></span> AIRLINES</p>
         <h1 class="cover-names" data-names></h1>
         <div class="field">
           <p class="label">PASSENGER</p>
@@ -42,6 +42,7 @@
         <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
       </div>
       <div class="ticket-stub" id="cover-stub">
+        <span class="barcode" aria-hidden="true"></span>
         <button class="btn btn-primary" id="open-invitation" type="button">
           <span class="btn-label">CHECK-IN</span>
           <span class="btn-caption">Buka Undangan</span>
@@ -54,7 +55,7 @@
   <main id="isi">
     <!-- 3 · Pembuka & Crew -->
     <section class="section" id="crew" tabindex="-1" aria-labelledby="crew-title">
-      <blockquote class="quote-card"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
+      <blockquote class="quote-card reveal"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
       <p class="lede" id="invite-line"></p>
       <h2 class="title" id="crew-title"><span class="label">THE CREW</span><span class="caption">Mempelai</span></h2>
       <div class="crew" id="couple"></div>
@@ -71,10 +72,22 @@
     <!-- 4 · Flight Info & Itinerary -->
     <section class="section" id="itinerary" tabindex="-1" aria-labelledby="itinerary-title">
       <h2 class="title" id="itinerary-title"><span class="label">ITINERARY</span><span class="caption">Jadwal Acara</span></h2>
-      <div class="ticket ticket-info">
-        <div class="grid" id="flight-grid"></div>
+      <div class="ticket ticket-info has-stub reveal">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
+        <div class="ticket-main">
+          <div class="route-big">
+            <div><p class="label">FROM</p><p class="caption">Asal</p><p class="city" id="route-from"></p></div>
+            <span class="route-line" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <div><p class="label">TO</p><p class="caption">Tujuan</p><p class="city" id="route-to"></p></div>
+          </div>
+          <div class="grid" id="flight-grid"></div>
+        </div>
+        <div class="ticket-stub">
+          <div class="field"><p class="label">PASSENGER</p><p class="caption">Nama Tamu</p><p class="value" data-guest></p></div>
+          <span class="barcode" aria-hidden="true"></span>
+        </div>
       </div>
-      <div class="board" id="countdown" role="timer" aria-label="Hitung mundur menuju acara" hidden>
+      <div class="board reveal" id="countdown" role="timer" aria-label="Hitung mundur menuju acara" hidden>
         <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
         <div class="board-cells">
           <div><strong data-unit="days">00</strong><span>Hari</span></div>
@@ -98,6 +111,7 @@
       <div id="story-block" hidden>
         <h2 class="title" id="route-title"><span class="label">FLIGHT ROUTE</span><span class="caption">Kisah Kami</span></h2>
         <ol class="route" id="chapters"></ol>
+        <p class="route-end" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
       </div>
       <div id="gallery-block" hidden>
         <h2 class="title"><span class="label">TRAVEL PHOTOS</span><span class="caption">Galeri</span></h2>
@@ -111,6 +125,7 @@
       <p class="note" id="reply-by" hidden></p>
       <p class="note" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
       <div class="ticket ticket-form">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span>CHECK-IN COUNTER</span><span>FORM</span></div>
         <form id="reply" novalidate>
           <div class="form-field">
             <label for="f-name"><span class="label">PASSENGER NAME</span><span class="caption">Nama</span></label>
@@ -132,9 +147,10 @@
               <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
             </select>
           </div>
-          <div class="form-field">
+          <div class="form-field msg-field">
             <label for="f-msg"><span class="label">MESSAGE</span><span class="caption">Ucapan &amp; doa (opsional)</span></label>
             <textarea id="f-msg" name="msg" rows="4" maxlength="500"></textarea>
+            <div class="stamp" id="stamp" hidden aria-hidden="true"><span>CONFIRMED</span></div>
           </div>
           <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
           <button class="btn btn-primary" id="reply-send" type="submit">
@@ -142,7 +158,6 @@
           </button>
           <p class="status" id="reply-status" role="status" aria-live="polite"></p>
         </form>
-        <div class="stamp" id="stamp" hidden aria-hidden="true"><span>CONFIRMED</span></div>
       </div>
       <p class="note" id="reply-closed" hidden>Formulir konfirmasi belum tersedia.</p>
 

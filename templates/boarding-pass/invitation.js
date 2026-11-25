@@ -51,6 +51,7 @@ setText('[data-date]', wedding.shortDate || wedding.date)
 
 const guest = (new URLSearchParams(location.search).get('to') || '').replace(/\s+/g, ' ').trim().slice(0, 80)
 if (guest) $('guest').textContent = guest
+setText('[data-guest]', guest || 'Tamu Undangan')
 
 if (wedding.quote) {
   $('quote-text').textContent = wedding.quote.text
@@ -72,7 +73,7 @@ for (const partner of crew) {
   const badge = el('figure', { class: 'crew-photo' })
   if (showPhotos && partner.portrait) badge.append(el('img', { src: asset(partner.portrait), alt: partner.name, loading: 'lazy', width: 300, height: 428 }))
   else badge.append(el('span', { class: 'monogram', text: monogram, 'aria-hidden': 'true' }))
-  const card = el('article', { class: 'crew-card ' + partner.role },
+  const card = el('article', { class: 'crew-card reveal ' + partner.role },
     el('p', { class: 'airline', text: initials + ' AIRLINES · CREW ID' }),
     badge,
     el('p', { class: 'label', text: groom ? 'CAPTAIN' : 'CO-PILOT' }),
@@ -90,11 +91,12 @@ for (const partner of crew) {
 }
 
 /* ---------- itinerary ---------- */
+$('route-from').textContent = route.from
+$('route-to').textContent = route.to
 const grid = $('flight-grid')
 grid.append(
   labelled('FLIGHT', 'Nomor', flightNo),
   labelled('DATE', 'Tanggal', wedding.shortDate || wedding.date),
-  labelled('FROM → TO', 'Rute', route.from + ' → ' + route.to, 'field wide'),
   labelled('BOARDING', 'Jam Mulai', first?.time?.split(/[–-]/)[0]?.trim() || '-'),
   labelled('GATE', 'Lokasi Acara', first?.venue || '-'),
   labelled('SEAT', 'Tempat Duduk', 'VIP'),
@@ -123,7 +125,7 @@ function icsFile(event, start, end) {
   return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body)
 }
 events.forEach((event, index) => {
-  const segment = el('article', { class: 'segment' },
+  const segment = el('article', { class: 'segment reveal' },
     el('p', { class: 'segment-no', text: 'SEGMENT ' + (index + 1) + ' / ' + events.length }),
     el('h3', { text: event.title }),
     el('div', { class: 'segment-grid' },
@@ -189,7 +191,15 @@ if (Number.isFinite(target)) {
     }
     box.hidden = false
     const parts = { days: Math.floor(left / 86400), hours: Math.floor(left / 3600) % 24, minutes: Math.floor(left / 60) % 60, seconds: left % 60 }
-    for (const [unit, value] of Object.entries(parts)) box.querySelector(`[data-unit="${unit}"]`).textContent = pad(value)
+    for (const [unit, value] of Object.entries(parts)) {
+      const cell = box.querySelector(`[data-unit="${unit}"]`)
+      if (cell.textContent === pad(value)) continue
+      cell.textContent = pad(value)
+      if (reducedMotion) continue
+      cell.classList.remove('flip')
+      void cell.offsetWidth // restart the flap animation
+      cell.classList.add('flip')
+    }
   }
   tick()
   if (target > Date.now()) timer = setInterval(tick, 1000)
@@ -198,7 +208,7 @@ if (Number.isFinite(target)) {
 /* ---------- route & gallery ---------- */
 const story = wedding.story || []
 story.forEach((chapter, index) => {
-  $('chapters').append(el('li', { class: 'stop' },
+  $('chapters').append(el('li', { class: 'stop reveal' },
     el('p', { class: 'label', text: 'TRANSIT ' + (index + 1) + (chapter.city ? ' · ' + chapter.city.toUpperCase() : '') }),
     chapter.date && el('p', { class: 'caption', text: chapter.date }),
     el('h3', { text: chapter.title }),
@@ -259,7 +269,7 @@ if (accounts.length || wedding.giftAddress) {
       }
       setTimeout(() => { copy.textContent = 'Salin' }, 2200)
     })
-    $('gift-list').append(el('div', { class: 'tag' },
+    $('gift-list').append(el('div', { class: 'tag reveal' },
       el('p', { class: 'label', text: 'BAGGAGE TAG' }),
       el('p', { class: 'caption', text: account.bank }),
       el('p', { class: 'value number', text: account.number }),
@@ -268,7 +278,7 @@ if (accounts.length || wedding.giftAddress) {
     ))
   })
   if (wedding.giftAddress) {
-    $('gift-list').append(el('div', { class: 'tag' },
+    $('gift-list').append(el('div', { class: 'tag reveal' },
       el('p', { class: 'label', text: 'DELIVERY' }),
       el('p', { class: 'caption', text: 'Alamat kirim kado' }),
       el('p', { class: 'value', text: wedding.giftAddress.recipient }),
@@ -354,6 +364,7 @@ async function loadLog() {
 function showStamp(animate) {
   $('stamp').hidden = false
   $('stamp').classList.toggle('pop', animate && !reducedMotion)
+  if (animate) $('stamp').scrollIntoView({ block: 'nearest', behavior: reducedMotion ? 'auto' : 'smooth' })
 }
 try { if (localStorage.getItem(doneKey)) showStamp(false) } catch {}
 
@@ -430,6 +441,39 @@ if (wedding.music) {
   music.addEventListener('click', () => (player.paused ? player.play().catch(() => {}) : player.pause()))
 }
 
+/* ---------- reveals, active tab, take-off ---------- */
+function watchScroll() {
+  const reveals = document.querySelectorAll('.reveal, #penutup')
+  if (reducedMotion || typeof IntersectionObserver !== 'function') {
+    reveals.forEach((node) => node.classList.add('in'))
+  } else {
+    document.body.classList.add('motion')
+    const io = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.add('in')
+        io.unobserve(entry.target)
+      }
+    }, { threshold: .15, rootMargin: '0px 0px -5% 0px' })
+    reveals.forEach((node) => io.observe(node))
+  }
+  if (typeof IntersectionObserver !== 'function') return
+  const tabs = [...document.querySelectorAll('.tabs a')]
+  const spy = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue
+      for (const tab of tabs) {
+        if (tab.hash === '#' + entry.target.id) tab.setAttribute('aria-current', 'true')
+        else tab.removeAttribute('aria-current')
+      }
+    }
+  }, { rootMargin: '-45% 0px -50% 0px' })
+  for (const tab of tabs) {
+    const target = document.querySelector(tab.hash)
+    if (target) spy.observe(target)
+  }
+}
+
 /* ---------- gate / opener ---------- */
 const cover = $('sampul')
 const main = $('isi')
@@ -438,6 +482,7 @@ function begin() {
   document.body.classList.add('opened')
   main.inert = false
   if (player) music.hidden = false
+  watchScroll()
 }
 function finishOpening() {
   cover.hidden = true
@@ -463,6 +508,6 @@ if (shortcut && shortcut !== cover) {
     const end = () => { if (!done) { done = true; finishOpening() } }
     skip.addEventListener('click', end, { once: true })
     cover.addEventListener('animationend', (event) => { if (event.target === cover) end() })
-    setTimeout(end, 2000) // safety net if animationend never fires
+    setTimeout(end, 1800) // safety net if animationend never fires
   }, { once: true })
 }
