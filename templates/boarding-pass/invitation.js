@@ -257,12 +257,19 @@ if (Number.isFinite(target)) {
 const story = wedding.story || []
 story.forEach((chapter, index) => {
   $('chapters').append(el('li', { class: 'stop reveal' },
-    el('p', { class: 'label', text: 'TRANSIT ' + (index + 1) + (chapter.city ? ' · ' + chapter.city.toUpperCase() : '') }),
-    chapter.date && el('p', { class: 'caption', text: chapter.date }),
-    el('h3', { text: chapter.title }),
-    el('p', { text: chapter.text }),
+    el('span', { class: 'stop-no', 'aria-hidden': 'true', text: pad(index + 1) }),
+    el('div', { class: 'stop-card' },
+      el('p', { class: 'stop-top' },
+        el('span', { class: 'label', text: 'TRANSIT ' + (index + 1) }),
+        chapter.date && el('span', { class: 'stop-date', text: chapter.date }),
+      ),
+      chapter.city && el('p', { class: 'stop-city' }, icon('pin'), el('span', { text: chapter.city })),
+      el('h3', { text: chapter.title }),
+      el('p', { text: chapter.text }),
+    ),
   ))
 })
+setText('[data-date-full]', wedding.date)
 const photos = wedding.photos || []
 $('story-block').hidden = !story.length
 $('gallery-block').hidden = !photos.length
@@ -279,8 +286,11 @@ function show(index) {
   $('viewer-pos').textContent = current + 1 + ' / ' + photos.length
 }
 photos.forEach((photo, index) => {
-  const link = el('a', { class: 'photo', href: asset(photo.file), 'aria-label': 'Lihat foto: ' + photo.alt, style: '--tilt:' + ([-3, 2, -1.5, 3, -2.5, 1][index % 6]) + 'deg' },
+  // First photo is featured full-width; the last one too when the rest would leave it alone on a row.
+  const wide = index === 0 || (index === photos.length - 1 && photos.length % 2 === 0)
+  const link = el('a', { class: 'photo' + (wide ? ' wide' : ''), href: asset(photo.file), 'aria-label': 'Lihat foto: ' + photo.alt, style: '--tilt:' + (wide ? [-1, 1][index % 2] : [-3, 2, -1.5, 3, -2.5, 1][index % 6]) + 'deg' },
     el('img', { src: asset(photo.file), alt: photo.alt, loading: 'lazy', decoding: 'async' }))
+  if (wide) link.firstChild.addEventListener('load', ({ target }) => link.classList.toggle('portrait', target.naturalHeight > target.naturalWidth), { once: true })
   link.addEventListener('click', (event) => {
     if (typeof viewer.showModal !== 'function' || event.metaKey || event.ctrlKey) return
     event.preventDefault()

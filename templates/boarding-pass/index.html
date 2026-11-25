@@ -153,12 +153,31 @@
     <section class="section" id="route" tabindex="-1" aria-labelledby="route-title">
       <div id="story-block" hidden>
         <h2 class="title" id="route-title"><span class="label">FLIGHT ROUTE</span><span class="caption">Kisah Kami</span></h2>
-        <ol class="route" id="chapters"></ol>
-        <p class="route-end" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
+        <div class="journey">
+          <div class="port depart reveal">
+            <span class="port-ico" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <p><span class="label">DEPARTURE</span><span class="caption">Berangkat dari</span><span class="city" data-route-from></span></p>
+          </div>
+          <ol class="route" id="chapters"></ol>
+          <div class="port arrive reveal">
+            <span class="port-ico" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <p><span class="label">ARRIVAL</span><span class="caption">Tiba di</span><span class="city" data-route-to></span><span class="port-date" data-date-full></span></p>
+          </div>
+        </div>
       </div>
       <div id="gallery-block" hidden>
         <h2 class="title"><span class="label">TRAVEL PHOTOS</span><span class="caption">Galeri</span></h2>
-        <div class="gallery" id="photos"></div>
+        <div class="passport reveal">
+          <p class="passport-head" aria-hidden="true"><span>PASSPORT</span><span>VISA · <span data-initials></span></span></p>
+          <svg class="passport-stamp" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><path id="stamp-ring" d="M50 50 m-35 0 a35 35 0 1 1 70 0 a35 35 0 1 1 -70 0"/></defs>
+            <circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="25"/>
+            <text><textPath href="#stamp-ring" textLength="216" lengthAdjust="spacing">ARRIVED · WITH LOVE · ARRIVED ·</textPath></text>
+            <use href="#i-plane" x="39" y="39" width="22" height="22"/>
+          </svg>
+          <div class="gallery" id="photos"></div>
+          <p class="passport-hint">Ketuk foto untuk memperbesar</p>
+        </div>
       </div>
     </section>
 
