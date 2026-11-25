@@ -30,6 +30,7 @@ const labelled = (label, caption, value, cls = 'field') => el('div', { class: cl
   el('p', { class: 'caption', text: caption }),
   el('p', { class: 'value', text: value }),
 )
+const pad = (n) => String(n).padStart(2, '0')
 const setText = (selector, text) => document.querySelectorAll(selector).forEach((node) => { node.textContent = text })
 
 /* ---------- derived data ---------- */
@@ -83,32 +84,37 @@ const roleOf = (partner, index) => partner.role === 'groom' || partner.role === 
 const crew = wedding.couple.map((partner, index) => ({ ...partner, role: roleOf(partner, index) }))
   .sort((a, b) => (a.role === 'groom' ? 0 : 1) - (b.role === 'groom' ? 0 : 1))
 const showPhotos = wedding.showCouplePhotos !== false
-crew.forEach((partner) => {
+// Crew ID card (landscape, like a real badge): airline strip, photo + details, role-coloured footer band.
+crew.forEach((partner, index) => {
   const groom = partner.role === 'groom'
-  const monogram = Array.from(partner.name.trim())[0]?.toUpperCase() || ''
+  const words = partner.name.trim().split(/\s+/)
   const photo = el('figure', { class: 'crew-photo' })
   if (showPhotos && partner.portrait) photo.append(el('img', { src: asset(partner.portrait), alt: partner.name, loading: 'lazy', width: 300, height: 428 }))
-  else photo.append(el('span', { class: 'monogram', text: monogram, 'aria-hidden': 'true' }))
-  const card = el('article', { class: 'crew-card reveal ' + partner.role },
-    photo,
+  else photo.append(el('span', { class: 'monogram', text: Array.from(words[0] || '')[0]?.toUpperCase() || '', 'aria-hidden': 'true' }))
+  const info = el('div', { class: 'id-info' },
     el('p', { class: 'label', text: groom ? 'CAPTAIN' : 'CO-PILOT' }),
     el('p', { class: 'caption', text: groom ? 'Mempelai Pria' : 'Mempelai Wanita' }),
-    // First name large, the rest small and tracked; the full name stays one heading for screen readers.
-    el('h3', { 'aria-label': partner.name },
-      el('span', { class: 'first', text: partner.name.trim().split(/\s+/)[0] }),
-      el('span', { class: 'rest', text: partner.name.trim().split(/\s+/).slice(1).join(' ') }),
-    ),
+    // First name large, the rest small and tracked; one heading with the full name for screen readers.
+    el('h3', { 'aria-label': partner.name }, el('span', { class: 'first', text: words[0] }), el('span', { class: 'rest', text: words.slice(1).join(' ') })),
     partner.family && el('p', { class: 'family', text: partner.family }),
   )
   const handle = partner.instagram?.replace(/^@/, '').trim()
   if (handle && /^[\w.]{1,30}$/.test(handle)) {
     const link = el('a', { class: 'social', href: 'https://www.instagram.com/' + handle + '/', target: '_blank', rel: 'noopener', 'aria-label': 'Instagram ' + partner.name })
     link.append(icon('camera'), '@' + handle)
-    card.append(link)
+    info.append(link)
   }
+  const card = el('article', { class: 'crew-card reveal ' + partner.role },
+    el('p', { class: 'id-head', 'aria-hidden': 'true' }, el('span', { text: initials + ' AIRLINES' }), el('span', { text: 'FLIGHT CREW' })),
+    el('div', { class: 'id-body' }, photo, info),
+    el('p', { class: 'id-foot', 'aria-hidden': 'true' },
+      el('span', { text: 'ID ' + initials + '-' + pad(index + 1) }),
+      el('span', { text: 'ISSUED ' + (wedding.shortDate || '') }),
+    ),
+  )
+  if (index > 0) $('couple').append(el('p', { class: 'crew-amp', 'aria-hidden': 'true', text: '&' }))
   $('couple').append(card)
 })
-if (crew.length === 2) $('couple').firstChild.append(el('span', { class: 'crew-amp', 'aria-hidden': 'true', text: '&' }))
 
 /* ---------- itinerary ---------- */
 $('route-from').textContent = route.from
@@ -226,7 +232,6 @@ const starts = events.map(({ startsAt }) => Date.parse(startsAt)).filter(Number.
 const ends = events.map(({ endsAt }) => Date.parse(endsAt)).filter(Number.isFinite)
 const target = Math.min(...starts)
 const finish = Math.max(...ends, target)
-const pad = (n) => String(n).padStart(2, '0')
 function countdownDone(now) {
   $('countdown').hidden = true
   const done = $('countdown-done')
