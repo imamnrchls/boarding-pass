@@ -27,6 +27,13 @@ Buka http://localhost:8000/?to=Ibu%20Dewi. Nama tamu dari `?to` hanya untuk sapa
 2. Set `demo: false`. Pasang `apps-script.gs` (langkah di kepala file) dan isi `rsvpEndpoint`. Tanpa endpoint dan bukan demo, form konfirmasi disembunyikan.
 3. `node build.mjs <slug>`, deploy isi `dist/`. Vercel: ubah `buildCommand` di `vercel.json`.
 
+### Preview WhatsApp
+
+Crawler WhatsApp tidak menjalankan JavaScript, jadi `build.mjs` menulis judul, deskripsi, dan meta `og:*` langsung ke HTML.
+
+- Isi `siteUrl` dengan alamat undangan yang sudah online (`https://…/`). Tanpa itu `og:image` tidak bisa absolut dan WhatsApp tidak menampilkan gambar; build memberi peringatan.
+- Buat `events/<slug>/og.jpg` (1200×630) dari `templates/boarding-pass/assets/og-background.jpg` dengan nama pasangan & tanggal di area kanan. Tanpa file ini dipakai latar polos tanpa nama.
+
 Field tambahan dibanding skema olive/betawi (semua opsional kecuali `role`):
 
 | Field | Fungsi |
@@ -38,5 +45,6 @@ Field tambahan dibanding skema olive/betawi (semua opsional kecuali `role`):
 | `dressCode {note, colors[]}` | Disembunyikan bila tidak ada. |
 | `story[].city` | Nama transit di rute cerita. |
 | `rsvpEndpoint` | URL Web app Apps Script (`…/exec`). |
+| `siteUrl` | Alamat undangan online, untuk preview WhatsApp. |
 
 Repo ini publik. Jangan simpan daftar tamu, data RSVP, atau data pribadi lain di sini.

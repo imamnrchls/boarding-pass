@@ -2,6 +2,8 @@
 // ditambah field opsional yang ditandai "Boarding Pass".
 export default {
   id: 'ayu-raka',
+  // Alamat undangan yang sudah online (wajib untuk preview WhatsApp), mis. 'https://ayuraka.web.id/'.
+  siteUrl: '',
   names: 'Ayu & Raka',
   // Boarding Pass (opsional): dua huruf untuk "{inisial} AIRLINES" dan nomor flight. Kosong → diambil dari `names`.
   initials: '',
