@@ -20,6 +20,8 @@
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" fill="currentColor"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4.5h14A1.5 1.5 0 0 1 20.5 6v13a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V6A1.5 1.5 0 0 1 5 4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-shirt" viewBox="0 0 24 24"><path d="M8 3 3 6l2 4 2-1v12h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 </svg>
 
@@ -125,7 +127,10 @@
         </div>
       </div>
       <div class="board reveal" id="countdown" role="timer" aria-label="Hitung mundur menuju acara" hidden>
-        <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
+        <div class="board-top">
+          <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
+          <p class="board-status"><span class="label">ON SCHEDULE</span><span class="caption">Sesuai jadwal</span></p>
+        </div>
         <div class="board-cells">
           <div><strong data-unit="days">00</strong><span>Hari</span></div>
           <div><strong data-unit="hours">00</strong><span>Jam</span></div>
@@ -137,6 +142,7 @@
       <p class="note" id="attendance-note" hidden></p>
       <div class="segments" id="events"></div>
       <div class="dress" id="dress" hidden>
+        <svg class="dress-ico" aria-hidden="true"><use href="#i-shirt"/></svg>
         <p><span class="label">DRESS CODE</span><span class="caption">Busana</span></p>
         <p id="dress-note"></p>
         <ul class="swatches" id="dress-colors"></ul>

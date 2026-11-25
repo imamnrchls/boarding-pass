@@ -113,12 +113,12 @@ grid.append(
   labelled('FLIGHT', 'Nomor', flightNo),
   labelled('DATE', 'Tanggal', wedding.shortDate || wedding.date),
   labelled('BOARDING', 'Jam Mulai', boardingTime),
-  labelled('GATE', 'Lokasi Acara', first?.venue || '-'),
-  labelled('SEAT', 'Tempat Duduk', 'VIP'),
+  labelled('GATE', 'Lokasi Acara', first?.venue || '-', 'field gate'),
+  labelled('SEAT', 'Tempat Duduk', 'VIP', 'field seat'),
 )
 
 if (wedding.attendanceNote) {
-  $('attendance-note').textContent = wedding.attendanceNote
+  $('attendance-note').append(icon('info'), el('span', { text: wedding.attendanceNote }))
   $('attendance-note').hidden = false
 }
 const mapLink = (event) => {
@@ -139,23 +139,56 @@ function icsFile(event, start, end) {
   ].join('\r\n')
   return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body)
 }
+// "09.00–10.00 WIB" → { from: '09.00', to: '10.00 WIB' }; anything else stays whole.
+const splitTime = (time = '') => {
+  const [from, to] = time.split(/\s*[–-]\s*/)
+  return to ? { from, to } : { from: time, to: '' }
+}
+const duration = (ms) => {
+  const minutes = Math.round(ms / 60000)
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return [h && h + ' jam', m && m + ' menit'].filter(Boolean).join(' ')
+}
 events.forEach((event, index) => {
+  const start = Date.parse(event.startsAt)
+  const end = Date.parse(event.endsAt)
+  const previousEnd = Date.parse(events[index - 1]?.endsAt)
+  if (index > 0 && start > previousEnd) {
+    $('events').append(el('div', { class: 'transit' }, el('p', {},
+      el('span', { class: 'label', text: 'TRANSIT' }),
+      el('span', { class: 'caption', text: 'Jeda ' + duration(start - previousEnd) }),
+    )))
+  }
+  const time = splitTime(event.time)
   const segment = el('article', { class: 'segment reveal' },
-    el('p', { class: 'segment-no', text: 'SEGMENT ' + (index + 1) + ' / ' + events.length }),
-    el('h3', { text: event.title }),
-    el('div', { class: 'segment-grid' },
-      labelled('DATE', 'Tanggal', event.date),
-      labelled('BOARDING', 'Jam', event.time),
-      labelled('GATE', 'Lokasi Acara', event.venue, 'field wide'),
+    el('p', { class: 'segment-head', 'aria-hidden': 'true' },
+      el('span', { text: 'SEGMENT ' + (index + 1) + ' / ' + events.length }),
+      el('span', { text: flightNo + (events.length > 1 ? String.fromCharCode(65 + index) : '') }),
     ),
-    el('address', { text: event.address }),
+    el('div', { class: 'segment-body' },
+      el('h3', { text: event.title }),
+      el('p', { class: 'segment-date' }, icon('cal'), el('span', { text: event.date })),
+      el('div', { class: 'segment-times' + (time.to ? '' : ' single') },
+        labelled('BOARDING', 'Mulai', time.from, 'field from'),
+        time.to && el('span', { class: 'route-line', 'aria-hidden': 'true' }, icon('plane', '')),
+        time.to && labelled('LANDING', 'Selesai', time.to, 'field to'),
+      ),
+      el('div', { class: 'segment-gate' },
+        el('span', { class: 'gate-pin', 'aria-hidden': 'true' }, icon('pin', '')),
+        el('div', {},
+          el('p', { class: 'label', text: 'GATE' }),
+          el('p', { class: 'caption', text: 'Lokasi Acara' }),
+          el('p', { class: 'value', text: event.venue }),
+          el('address', { text: event.address }),
+        ),
+      ),
+    ),
   )
   const actions = el('div', { class: 'actions' })
   const map = el('a', { class: 'btn btn-primary small', href: mapLink(event), target: '_blank', rel: 'noopener', 'aria-label': 'Buka lokasi ' + event.title + ' di Google Maps' })
   map.append(icon('pin'), 'Arahkan ke Gate (Maps)')
   actions.append(map)
-  const start = Date.parse(event.startsAt)
-  const end = Date.parse(event.endsAt)
   if (Number.isFinite(start) && end > start) {
     const gcal = el('a', {
       class: 'btn btn-ghost small', target: '_blank', rel: 'noopener', 'aria-label': 'Simpan ' + event.title + ' ke Google Calendar',
@@ -165,7 +198,7 @@ events.forEach((event, index) => {
     })
     gcal.append(icon('cal'), 'Google Calendar')
     const ics = el('a', { class: 'btn btn-ghost small', href: icsFile(event, start, end), download: wedding.id + '-' + (index + 1) + '.ics', 'aria-label': 'Unduh ' + event.title + ' sebagai file kalender' })
-    ics.append(icon('cal'), 'Kalender (.ics)')
+    ics.append(icon('cal'), 'File .ics')
     actions.append(gcal, ics)
   }
   segment.append(actions)
