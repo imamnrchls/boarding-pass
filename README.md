@@ -42,7 +42,7 @@ Field tambahan dibanding skema olive/betawi (semua opsional kecuali `role`):
 | `initials` | Untuk `{inisial} AIRLINES` dan nomor flight. Kosong → huruf pertama tiap nama di `names`. |
 | `route {from, to}` | Rute di tiket. Default `Sendiri → Bersama`. |
 | `showCouplePhotos` | `false` → kartu kru memakai inisial. |
-| `dressCode {note, colors[]}` | Disembunyikan bila tidak ada. |
+| `dressCode {note, colors[]}` | Disembunyikan bila tidak ada. Warna boleh `'#hex'` atau `{ color: '#hex', name: 'Krem' }`; nama tampil di bawah palet dan dibacakan screen reader. |
 | `story[].city` | Nama transit di rute cerita. |
 | `rsvpEndpoint` | URL Web app Apps Script (`…/exec`). |
 | `siteUrl` | Alamat undangan online, untuk preview WhatsApp. |

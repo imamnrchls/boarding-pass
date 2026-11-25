@@ -30,8 +30,8 @@ export default {
     { title: 'Akad Nikah', startsAt: '2027-07-17T09:00:00+07:00', endsAt: '2027-07-17T10:00:00+07:00', date: 'Sabtu, 17 Juli 2027', time: '09.00–10.00 WIB', venue: 'Pendopo Taman Sari', address: 'Patehan, Kraton, Kota Yogyakarta', mapQuery: 'Pendopo Taman Sari, Patehan, Kraton, Kota Yogyakarta' },
     { title: 'Resepsi', startsAt: '2027-07-17T11:00:00+07:00', endsAt: '2027-07-17T14:00:00+07:00', date: 'Sabtu, 17 Juli 2027', time: '11.00–14.00 WIB', venue: 'Pendopo Taman Sari', address: 'Patehan, Kraton, Kota Yogyakarta', mapQuery: 'Pendopo Taman Sari, Patehan, Kraton, Kota Yogyakarta' },
   ],
-  // Boarding Pass (opsional): hapus atau kosongkan untuk menyembunyikan.
-  dressCode: { note: 'Smart casual, nuansa biru & krem', colors: ['#2F6FD6', '#F3E6CF', '#FAFAF7'] },
+  // Boarding Pass (opsional): hapus atau kosongkan untuk menyembunyikan. Warna: '#hex' atau { color: '#hex', name: 'Krem' }.
+  dressCode: { note: 'Smart casual, nuansa biru & krem', colors: [{ color: '#2F6FD6', name: 'Biru' }, { color: '#F3E6CF', name: 'Krem' }, { color: '#FAFAF7', name: 'Putih gading' }] },
   gift: 'Doa dan kehadiran Anda adalah hadiah bagi kami.',
   // The sample numbers are placeholders.
   giftAccounts: [
