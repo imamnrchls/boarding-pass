@@ -20,45 +20,76 @@
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z" fill="currentColor"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><path d="M7 2v3M17 2v3M3.5 9h17M5 4.5h14A1.5 1.5 0 0 1 20.5 6v13a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 19V6A1.5 1.5 0 0 1 5 4.5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.3" cy="6.7" r="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.01" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 5.5v-1A1.5 1.5 0 0 0 14 3H5a1.5 1.5 0 0 0-1.5 1.5V14A1.5 1.5 0 0 0 5 15.5h1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-gift" viewBox="0 0 24 24"><path d="M4 11h16v9.5a.5.5 0 0 1-.5.5h-15a.5.5 0 0 1-.5-.5ZM3 7.5h18V11H3ZM12 7.5V21M12 7.5S10.5 3 8 3.5 7 7.5 12 7.5Zm0 0s1.5-4.5 4-4-1 4-4 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
   <symbol id="i-note" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-3-3 3 3 0 0 1 3 3Zm11-2a3 3 0 1 1-3-3 3 3 0 0 1 3 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 </svg>
 
 <div class="stage">
   <!-- 1 · Cover -->
   <header class="cover" id="sampul">
-    <div class="cover-sky" aria-hidden="true"><svg class="cover-plane"><use href="#i-plane"/></svg></div>
-    <div class="ticket ticket-cover has-stub" id="cover-ticket">
-      <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
-      <div class="ticket-main">
-        <h1 class="cover-names" data-names></h1>
-        <div class="field">
-          <p class="label">PASSENGER</p>
-          <p class="caption">Kepada Yth. Bapak/Ibu/Saudara/i</p>
-          <p class="value guest" id="guest">Tamu Undangan</p>
+    <div class="cover-sky" aria-hidden="true">
+      <span class="cover-sun"></span>
+      <svg class="cover-flight" viewBox="0 0 160 60"><path class="trail" d="M4 54 C 50 50, 96 34, 132 14"/><use href="#i-plane" x="128" y="0" width="26" height="26" transform="rotate(30 141 13)"/></svg>
+      <svg class="cover-plane far"><use href="#i-plane"/></svg>
+    </div>
+    <div class="cover-inner">
+      <p class="cover-eyebrow"><span class="label">THE WEDDING OF</span><span class="caption">Undangan Pernikahan</span></p>
+      <div class="ticket ticket-cover has-stub" id="cover-ticket">
+        <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span><span data-initials></span> AIRLINES</span><span>BOARDING PASS</span></div>
+        <div class="ticket-main">
+          <div class="cover-route">
+            <div><p class="label">FROM</p><p class="caption">Asal</p><p class="city" data-route-from></p></div>
+            <span class="route-line" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <div><p class="label">TO</p><p class="caption">Tujuan</p><p class="city" data-route-to></p></div>
+          </div>
+          <h1 class="cover-names" data-names></h1>
+          <div class="cover-grid">
+            <div class="field"><p class="label">FLIGHT</p><p class="caption">Nomor</p><p class="value" data-flight></p></div>
+            <div class="field"><p class="label">DATE</p><p class="caption">Tanggal</p><p class="value" data-date></p></div>
+            <div class="field"><p class="label">BOARDING</p><p class="caption">Jam</p><p class="value" data-boarding></p></div>
+          </div>
+          <div class="field cover-passenger">
+            <p class="label">PASSENGER</p>
+            <p class="caption">Kepada Yth. Bapak/Ibu/Saudara/i</p>
+            <p class="value guest" id="guest">Tamu Undangan</p>
+          </div>
+          <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
         </div>
-        <div class="field">
-          <p class="label">DATE</p>
-          <p class="caption">Tanggal</p>
-          <p class="value" data-date></p>
+        <div class="ticket-stub" id="cover-stub">
+          <div class="stub-row">
+            <span class="barcode" aria-hidden="true"></span>
+            <svg class="cover-seal" viewBox="0 0 100 100" aria-hidden="true">
+              <defs><path id="seal-ring" d="M50 50 m-36 0 a36 36 0 1 1 72 0 a36 36 0 1 1 -72 0"/></defs>
+              <circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="27"/>
+              <text><textPath href="#seal-ring" textLength="222" lengthAdjust="spacing">SAVE THE DATE · SAVE THE DATE ·</textPath></text>
+              <use href="#i-plane" x="38" y="38" width="24" height="24"/>
+            </svg>
+          </div>
+          <button class="btn btn-primary btn-checkin" id="open-invitation" type="button">
+            <span class="btn-label">CHECK-IN</span>
+            <span class="btn-caption">Buka Undangan</span>
+            <svg class="ico" aria-hidden="true"><use href="#i-plane"/></svg>
+          </button>
         </div>
-        <p class="guest-note">Mohon maaf bila ada salah penulisan nama/gelar</p>
-      </div>
-      <div class="ticket-stub" id="cover-stub">
-        <span class="barcode" aria-hidden="true"></span>
-        <button class="btn btn-primary" id="open-invitation" type="button">
-          <span class="btn-label">CHECK-IN</span>
-          <span class="btn-caption">Buka Undangan</span>
-        </button>
       </div>
     </div>
     <button class="skip" id="skip-opener" type="button" hidden>Lewati animasi</button>
   </header>
 
   <main id="isi">
+    <h1 class="sr-only">Undangan Pernikahan <span data-names></span></h1>
     <!-- 3 · Pembuka & Crew -->
     <section class="section" id="crew" tabindex="-1" aria-labelledby="crew-title">
-      <blockquote class="quote-card reveal"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
-      <p class="lede" id="invite-line"></p>
+      <div class="announce reveal">
+        <p class="announce-head"><span class="label">CABIN ANNOUNCEMENT</span><span class="caption">Pengumuman</span></p>
+        <blockquote class="quote-card"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
+      </div>
+      <div class="invite reveal">
+        <p class="divider" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
+        <p class="lede" id="invite-line"></p>
+      </div>
       <h2 class="title" id="crew-title"><span class="label">THE CREW</span><span class="caption">Mempelai</span></h2>
       <div class="crew" id="couple"></div>
       <a class="btn btn-ghost" href="#itinerary"><svg class="ico"><use href="#i-pin"/></svg>Lihat Jadwal &amp; Lokasi</a>
@@ -90,7 +121,10 @@
         </div>
       </div>
       <div class="board reveal" id="countdown" role="timer" aria-label="Hitung mundur menuju acara" hidden>
-        <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
+        <div class="board-top">
+          <p class="board-head"><span class="label">DEPARTURE IN</span><span class="caption">Menuju hari bahagia</span></p>
+          <p class="board-status"><span class="label">ON SCHEDULE</span><span class="caption">Sesuai jadwal</span></p>
+        </div>
         <div class="board-cells">
           <div><strong data-unit="days">00</strong><span>Hari</span></div>
           <div><strong data-unit="hours">00</strong><span>Jam</span></div>
@@ -104,7 +138,7 @@
       <div class="dress" id="dress" hidden>
         <p><span class="label">DRESS CODE</span><span class="caption">Busana</span></p>
         <p id="dress-note"></p>
-        <ul class="swatches" id="dress-colors"></ul>
+        <ul class="swatches" id="dress-colors" aria-label="Palet warna"></ul>
       </div>
     </section>
 
@@ -112,20 +146,41 @@
     <section class="section" id="route" tabindex="-1" aria-labelledby="route-title">
       <div id="story-block" hidden>
         <h2 class="title" id="route-title"><span class="label">FLIGHT ROUTE</span><span class="caption">Kisah Kami</span></h2>
-        <ol class="route" id="chapters"></ol>
-        <p class="route-end" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
+        <div class="journey">
+          <div class="port depart reveal">
+            <span class="port-ico" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <p><span class="label">DEPARTURE</span><span class="caption">Berangkat dari</span><span class="city" data-route-from></span></p>
+          </div>
+          <ol class="route" id="chapters"></ol>
+          <div class="port arrive reveal">
+            <span class="port-ico" aria-hidden="true"><svg><use href="#i-plane"/></svg></span>
+            <p><span class="label">ARRIVAL</span><span class="caption">Tiba di</span><span class="city" data-route-to></span><span class="port-date" data-date-full></span></p>
+          </div>
+        </div>
       </div>
       <div id="gallery-block" hidden>
         <h2 class="title"><span class="label">TRAVEL PHOTOS</span><span class="caption">Galeri</span></h2>
-        <div class="gallery" id="photos"></div>
+        <div class="passport reveal">
+          <p class="passport-head" aria-hidden="true"><span>PASSPORT</span><span>VISA · <span data-initials></span></span></p>
+          <svg class="passport-stamp" viewBox="0 0 100 100" aria-hidden="true">
+            <defs><path id="stamp-ring" d="M50 50 m-35 0 a35 35 0 1 1 70 0 a35 35 0 1 1 -70 0"/></defs>
+            <circle cx="50" cy="50" r="46"/><circle cx="50" cy="50" r="25"/>
+            <text><textPath href="#stamp-ring" textLength="216" lengthAdjust="spacing">ARRIVED · WITH LOVE · ARRIVED ·</textPath></text>
+            <use href="#i-plane" x="39" y="39" width="22" height="22"/>
+          </svg>
+          <div class="gallery" id="photos"></div>
+          <p class="passport-hint">Ketuk foto untuk memperbesar</p>
+        </div>
       </div>
     </section>
 
     <!-- 6 · Check-in (RSVP) & Flight Log -->
     <section class="section" id="checkin" tabindex="-1" aria-labelledby="checkin-title">
       <h2 class="title" id="checkin-title"><span class="label">CHECK-IN</span><span class="caption">Konfirmasi Kehadiran</span></h2>
-      <p class="note" id="reply-by" hidden></p>
-      <p class="note" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
+      <div class="checkin-notes">
+        <p class="chip" id="reply-by" hidden></p>
+        <p class="chip demo" id="demo-note" hidden><strong>Mode contoh.</strong> Data hanya tersimpan di perangkat ini.</p>
+      </div>
       <div class="ticket ticket-form">
         <div class="ticket-head" aria-hidden="true"><svg class="ico"><use href="#i-plane"/></svg><span>CHECK-IN COUNTER</span><span>FORM</span></div>
         <form id="reply" novalidate>
@@ -137,9 +192,9 @@
           <fieldset class="form-field">
             <legend><span class="label">STATUS</span><span class="caption">Kehadiran</span></legend>
             <div class="choices">
-              <label><input type="radio" name="att" value="y" required><span>Hadir</span></label>
-              <label><input type="radio" name="att" value="m"><span>Masih ragu</span></label>
-              <label><input type="radio" name="att" value="n"><span>Tidak hadir</span></label>
+              <label class="choice-y"><input type="radio" name="att" value="y" required><span class="mark" aria-hidden="true"></span><span>Hadir</span></label>
+              <label class="choice-m"><input type="radio" name="att" value="m"><span class="mark" aria-hidden="true"></span><span>Masih ragu</span></label>
+              <label class="choice-n"><input type="radio" name="att" value="n"><span class="mark" aria-hidden="true"></span><span>Tidak hadir</span></label>
             </div>
             <p class="error" id="e-att" hidden>Pilih status kehadiran.</p>
           </fieldset>
@@ -151,14 +206,18 @@
           </div>
           <div class="form-field msg-field">
             <label for="f-msg"><span class="label">MESSAGE</span><span class="caption">Ucapan &amp; doa (opsional)</span></label>
-            <textarea id="f-msg" name="msg" rows="4" maxlength="500"></textarea>
+            <textarea id="f-msg" name="msg" rows="4" maxlength="500" placeholder="Tulis doa terbaik untuk kedua mempelai…" aria-describedby="msg-count"></textarea>
+            <p class="counter" id="msg-count"><span id="msg-len">0</span>/500</p>
             <div class="stamp" id="stamp" hidden aria-hidden="true"><span>CONFIRMED</span></div>
           </div>
           <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-          <button class="btn btn-primary" id="reply-send" type="submit">
-            <span class="btn-label">CONFIRM</span><span class="btn-caption">Kirim Konfirmasi</span>
-          </button>
-          <p class="status" id="reply-status" role="status" aria-live="polite"></p>
+          <div class="form-stub">
+            <button class="btn btn-primary" id="reply-send" type="submit">
+              <span class="btn-label">CONFIRM</span><span class="btn-caption">Kirim Konfirmasi</span>
+              <svg class="ico" aria-hidden="true"><use href="#i-plane"/></svg>
+            </button>
+            <p class="status" id="reply-status" role="status" aria-live="polite"></p>
+          </div>
         </form>
       </div>
       <p class="note" id="reply-closed" hidden>Formulir konfirmasi belum tersedia.</p>
@@ -166,9 +225,12 @@
       <div id="log-block" hidden>
         <h2 class="title"><span class="label">FLIGHT LOG</span><span class="caption">Doa &amp; Ucapan</span></h2>
         <div class="tally" id="tally" hidden>
-          <p><strong id="count-y">0</strong><span>Hadir</span></p>
-          <p><strong id="count-m">0</strong><span>Ragu</span></p>
-          <p><strong id="count-n">0</strong><span>Tidak</span></p>
+          <p class="tally-head"><span class="label">PASSENGER MANIFEST</span><span class="caption">Rekap konfirmasi</span></p>
+          <div class="tally-cells">
+            <p class="y"><strong id="count-y">0</strong><span>Hadir</span></p>
+            <p class="m"><strong id="count-m">0</strong><span>Ragu</span></p>
+            <p class="n"><strong id="count-n">0</strong><span>Tidak</span></p>
+          </div>
         </div>
         <ol class="log" id="wishes" aria-label="Ucapan tamu"></ol>
       </div>
@@ -176,17 +238,22 @@
 
     <!-- 7 · Gift Baggage & Penutup -->
     <section class="section" id="gift" tabindex="-1" aria-labelledby="gift-title" hidden>
+      <span class="gift-ico" aria-hidden="true"><svg><use href="#i-gift"/></svg></span>
       <h2 class="title" id="gift-title"><span class="label">GIFT BAGGAGE</span><span class="caption">Tanda Kasih</span></h2>
       <p class="lede" id="gift-text"></p>
       <div class="tags" id="gift-list"></div>
     </section>
 
     <section class="section closing" id="penutup">
-      <svg class="closing-plane" aria-hidden="true"><use href="#i-plane"/></svg>
-      <p class="closing-title"><span class="label">THANK YOU FOR FLYING WITH US</span><span class="caption">Terima kasih atas doa &amp; kehadirannya</span></p>
-      <p class="lede" id="closing-text"></p>
-      <p class="caption">Kami yang berbahagia</p>
-      <p class="closing-names" data-names></p>
+      <div class="closing-card">
+        <svg class="closing-plane" aria-hidden="true"><use href="#i-plane"/></svg>
+        <p class="closing-badge" aria-hidden="true">ARRIVED · <span data-flight></span></p>
+        <p class="closing-title"><span class="label">THANK YOU FOR FLYING WITH US</span><span class="caption">Terima kasih atas doa &amp; kehadirannya</span></p>
+        <p class="lede" id="closing-text"></p>
+        <p class="closing-sign">Kami yang berbahagia</p>
+        <p class="closing-names" data-names></p>
+        <p class="closing-date" data-date-full></p>
+      </div>
     </section>
   </main>
 

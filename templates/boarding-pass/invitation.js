@@ -30,6 +30,7 @@ const labelled = (label, caption, value, cls = 'field') => el('div', { class: cl
   el('p', { class: 'caption', text: caption }),
   el('p', { class: 'value', text: value }),
 )
+const pad = (n) => String(n).padStart(2, '0')
 const setText = (selector, text) => document.querySelectorAll(selector).forEach((node) => { node.textContent = text })
 
 /* ---------- derived data ---------- */
@@ -40,6 +41,13 @@ const initials = (wedding.initials || wedding.names.split(/\s*&\s*/).map((part) 
 // Day and month as written in the event's own offset (avoids the viewer's time zone).
 const isoDay = /^\d{4}-(\d{2})-(\d{2})/.exec(first?.startsAt || '')
 const flightNo = initials + (isoDay ? ' ' + isoDay[2] + isoDay[1] : '')
+// "09.00–10.00 WIB" → { from: '09.00', to: '10.00 WIB' }; "Pukul 19.00 WIB s.d. selesai" → { from: '19.00 WIB', to: 'Selesai' }.
+const splitTime = (time = '') => {
+  const [from, to] = time.replace(/^\s*pukul\s+/i, '').split(/\s*(?:[–-]|\bs\.?\s?d\.?|\bsampai\b)\s*/i)
+  const cap = (text) => text.charAt(0).toUpperCase() + text.slice(1)
+  return to ? { from: from.trim(), to: cap(to.trim()) } : { from: from.trim(), to: '' }
+}
+const boardingTime = splitTime(first?.time).from || '-'
 const route = { from: wedding.route?.from || 'Sendiri', to: wedding.route?.to || 'Bersama' }
 
 /* ---------- cover & text ---------- */
@@ -48,6 +56,15 @@ document.querySelector('meta[name="description"]').content = 'Undangan pernikaha
 setText('[data-names]', wedding.names)
 setText('[data-initials]', initials)
 setText('[data-date]', wedding.shortDate || wedding.date)
+setText('[data-flight]', flightNo)
+setText('[data-boarding]', boardingTime)
+setText('[data-route-from]', route.from)
+setText('[data-route-to]', route.to)
+// Cover title: the "&" gets its own span so it can be styled; names stay plain text.
+for (const heading of document.querySelectorAll('.cover-names, .closing-names')) {
+  const parts = wedding.names.split(/\s*&\s*/)
+  if (parts.length === 2) heading.replaceChildren(parts[0] + ' ', el('span', { class: 'amp', text: '&' }), ' ' + parts[1])
+}
 
 const guest = (new URLSearchParams(location.search).get('to') || '').replace(/\s+/g, ' ').trim().slice(0, 80)
 if (guest) $('guest').textContent = guest
@@ -67,28 +84,37 @@ const roleOf = (partner, index) => partner.role === 'groom' || partner.role === 
 const crew = wedding.couple.map((partner, index) => ({ ...partner, role: roleOf(partner, index) }))
   .sort((a, b) => (a.role === 'groom' ? 0 : 1) - (b.role === 'groom' ? 0 : 1))
 const showPhotos = wedding.showCouplePhotos !== false
-for (const partner of crew) {
+// Crew ID card (landscape, like a real badge): airline strip, photo + details, role-coloured footer band.
+crew.forEach((partner, index) => {
   const groom = partner.role === 'groom'
-  const monogram = Array.from(partner.name.trim())[0]?.toUpperCase() || ''
-  const badge = el('figure', { class: 'crew-photo' })
-  if (showPhotos && partner.portrait) badge.append(el('img', { src: asset(partner.portrait), alt: partner.name, loading: 'lazy', width: 300, height: 428 }))
-  else badge.append(el('span', { class: 'monogram', text: monogram, 'aria-hidden': 'true' }))
-  const card = el('article', { class: 'crew-card reveal ' + partner.role },
-    el('p', { class: 'airline', text: initials + ' AIRLINES · CREW ID' }),
-    badge,
+  const words = partner.name.trim().split(/\s+/)
+  const photo = el('figure', { class: 'crew-photo' })
+  if (showPhotos && partner.portrait) photo.append(el('img', { src: asset(partner.portrait), alt: partner.name, loading: 'lazy', width: 300, height: 428 }))
+  else photo.append(el('span', { class: 'monogram', text: Array.from(words[0] || '')[0]?.toUpperCase() || '', 'aria-hidden': 'true' }))
+  const info = el('div', { class: 'id-info' },
     el('p', { class: 'label', text: groom ? 'CAPTAIN' : 'CO-PILOT' }),
     el('p', { class: 'caption', text: groom ? 'Mempelai Pria' : 'Mempelai Wanita' }),
-    el('h3', { text: partner.name }),
+    // First name large, the rest small and tracked; one heading with the full name for screen readers.
+    el('h3', { 'aria-label': partner.name }, el('span', { class: 'first', text: words[0] }), el('span', { class: 'rest', text: words.slice(1).join(' ') })),
     partner.family && el('p', { class: 'family', text: partner.family }),
   )
   const handle = partner.instagram?.replace(/^@/, '').trim()
   if (handle && /^[\w.]{1,30}$/.test(handle)) {
     const link = el('a', { class: 'social', href: 'https://www.instagram.com/' + handle + '/', target: '_blank', rel: 'noopener', 'aria-label': 'Instagram ' + partner.name })
     link.append(icon('camera'), '@' + handle)
-    card.append(link)
+    info.append(link)
   }
+  const card = el('article', { class: 'crew-card reveal ' + partner.role },
+    el('p', { class: 'id-head', 'aria-hidden': 'true' }, el('span', { text: initials + ' AIRLINES' }), el('span', { text: 'FLIGHT CREW' })),
+    el('div', { class: 'id-body' }, photo, info),
+    el('p', { class: 'id-foot', 'aria-hidden': 'true' },
+      el('span', { text: 'ID ' + initials + '-' + pad(index + 1) }),
+      el('span', { text: 'ISSUED ' + (wedding.shortDate || '') }),
+    ),
+  )
+  if (index > 0) $('couple').append(el('p', { class: 'crew-amp', 'aria-hidden': 'true', text: '&' }))
   $('couple').append(card)
-}
+})
 
 /* ---------- itinerary ---------- */
 $('route-from').textContent = route.from
@@ -97,13 +123,13 @@ const grid = $('flight-grid')
 grid.append(
   labelled('FLIGHT', 'Nomor', flightNo),
   labelled('DATE', 'Tanggal', wedding.shortDate || wedding.date),
-  labelled('BOARDING', 'Jam Mulai', first?.time?.split(/[–-]/)[0]?.trim() || '-'),
-  labelled('GATE', 'Lokasi Acara', first?.venue || '-'),
-  labelled('SEAT', 'Tempat Duduk', 'VIP'),
+  labelled('BOARDING', 'Jam Mulai', boardingTime),
+  labelled('GATE', 'Lokasi Acara', first?.venue || '-', 'field gate'),
+  labelled('SEAT', 'Tempat Duduk', 'VIP', 'field seat'),
 )
 
 if (wedding.attendanceNote) {
-  $('attendance-note').textContent = wedding.attendanceNote
+  $('attendance-note').append(icon('info'), el('span', { text: wedding.attendanceNote }))
   $('attendance-note').hidden = false
 }
 const mapLink = (event) => {
@@ -124,23 +150,51 @@ function icsFile(event, start, end) {
   ].join('\r\n')
   return 'data:text/calendar;charset=utf-8,' + encodeURIComponent(body)
 }
+const duration = (ms) => {
+  const minutes = Math.round(ms / 60000)
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return [h && h + ' jam', m && m + ' menit'].filter(Boolean).join(' ')
+}
 events.forEach((event, index) => {
+  const start = Date.parse(event.startsAt)
+  const end = Date.parse(event.endsAt)
+  const previousEnd = Date.parse(events[index - 1]?.endsAt)
+  if (index > 0 && start > previousEnd) {
+    $('events').append(el('div', { class: 'transit' }, el('p', {},
+      el('span', { class: 'label', text: 'TRANSIT' }),
+      el('span', { class: 'caption', text: 'Jeda ' + duration(start - previousEnd) }),
+    )))
+  }
+  const time = splitTime(event.time)
   const segment = el('article', { class: 'segment reveal' },
-    el('p', { class: 'segment-no', text: 'SEGMENT ' + (index + 1) + ' / ' + events.length }),
-    el('h3', { text: event.title }),
-    el('div', { class: 'segment-grid' },
-      labelled('DATE', 'Tanggal', event.date),
-      labelled('BOARDING', 'Jam', event.time),
-      labelled('GATE', 'Lokasi Acara', event.venue, 'field wide'),
+    el('p', { class: 'segment-head', 'aria-hidden': 'true' },
+      el('span', { text: 'SEGMENT ' + (index + 1) + ' / ' + events.length }),
+      el('span', { text: flightNo + (events.length > 1 ? String.fromCharCode(65 + index) : '') }),
     ),
-    el('address', { text: event.address }),
+    el('div', { class: 'segment-body' },
+      el('h3', { text: event.title }),
+      el('p', { class: 'segment-date' }, icon('cal'), el('span', { text: event.date })),
+      el('div', { class: 'segment-times' + (time.to ? '' : ' single') },
+        labelled('BOARDING', 'Mulai', time.from, 'field from'),
+        time.to && el('span', { class: 'route-line', 'aria-hidden': 'true' }, icon('plane', '')),
+        time.to && labelled('LANDING', 'Selesai', time.to, 'field to'),
+      ),
+      el('div', { class: 'segment-gate' },
+        el('span', { class: 'gate-pin', 'aria-hidden': 'true' }, icon('pin', '')),
+        el('div', {},
+          el('p', { class: 'label', text: 'GATE' }),
+          el('p', { class: 'caption', text: 'Lokasi Acara' }),
+          el('p', { class: 'value', text: event.venue }),
+          el('address', { text: event.address }),
+        ),
+      ),
+    ),
   )
   const actions = el('div', { class: 'actions' })
   const map = el('a', { class: 'btn btn-primary small', href: mapLink(event), target: '_blank', rel: 'noopener', 'aria-label': 'Buka lokasi ' + event.title + ' di Google Maps' })
   map.append(icon('pin'), 'Arahkan ke Gate (Maps)')
   actions.append(map)
-  const start = Date.parse(event.startsAt)
-  const end = Date.parse(event.endsAt)
   if (Number.isFinite(start) && end > start) {
     const gcal = el('a', {
       class: 'btn btn-ghost small', target: '_blank', rel: 'noopener', 'aria-label': 'Simpan ' + event.title + ' ke Google Calendar',
@@ -150,7 +204,7 @@ events.forEach((event, index) => {
     })
     gcal.append(icon('cal'), 'Google Calendar')
     const ics = el('a', { class: 'btn btn-ghost small', href: icsFile(event, start, end), download: wedding.id + '-' + (index + 1) + '.ics', 'aria-label': 'Unduh ' + event.title + ' sebagai file kalender' })
-    ics.append(icon('cal'), 'Kalender (.ics)')
+    ics.append(icon('cal'), 'File .ics')
     actions.append(gcal, ics)
   }
   segment.append(actions)
@@ -161,10 +215,16 @@ const dress = wedding.dressCode
 if (dress && (dress.note || dress.colors?.length)) {
   $('dress').hidden = false
   $('dress-note').textContent = dress.note || ''
-  for (const color of dress.colors || []) {
-    if (!/^#[0-9a-f]{3,8}$/i.test(color)) continue
-    $('dress-colors').append(el('li', { style: 'background:' + color, 'aria-label': 'Warna ' + color }))
-  }
+  // colors: '#hex' or { color: '#hex', name: 'Krem' }. Names are shown and read out; a bare hex only gets a position.
+  const colors = (dress.colors || []).map((item) => typeof item === 'string' ? { color: item } : item)
+    .filter((item) => /^#[0-9a-f]{3,8}$/i.test(item?.color || ''))
+  colors.forEach((item, index) => {
+    $('dress-colors').append(el('li', { style: '--c:' + item.color + ';--r:' + [-4, 3, -2, 4, -3][index % 5] + 'deg' },
+      el('span', { class: 'chip-color', 'aria-hidden': 'true' }),
+      el('span', { class: item.name ? 'chip-name' : 'sr-only', text: item.name || 'Warna ' + (index + 1) }),
+    ))
+  })
+  $('dress-colors').hidden = !colors.length
 }
 
 /* ---------- countdown ---------- */
@@ -172,7 +232,6 @@ const starts = events.map(({ startsAt }) => Date.parse(startsAt)).filter(Number.
 const ends = events.map(({ endsAt }) => Date.parse(endsAt)).filter(Number.isFinite)
 const target = Math.min(...starts)
 const finish = Math.max(...ends, target)
-const pad = (n) => String(n).padStart(2, '0')
 function countdownDone(now) {
   $('countdown').hidden = true
   const done = $('countdown-done')
@@ -209,12 +268,19 @@ if (Number.isFinite(target)) {
 const story = wedding.story || []
 story.forEach((chapter, index) => {
   $('chapters').append(el('li', { class: 'stop reveal' },
-    el('p', { class: 'label', text: 'TRANSIT ' + (index + 1) + (chapter.city ? ' · ' + chapter.city.toUpperCase() : '') }),
-    chapter.date && el('p', { class: 'caption', text: chapter.date }),
-    el('h3', { text: chapter.title }),
-    el('p', { text: chapter.text }),
+    el('span', { class: 'stop-no', 'aria-hidden': 'true', text: pad(index + 1) }),
+    el('div', { class: 'stop-card' },
+      el('p', { class: 'stop-top' },
+        el('span', { class: 'label', text: 'TRANSIT ' + (index + 1) }),
+        chapter.date && el('span', { class: 'stop-date', text: chapter.date }),
+      ),
+      chapter.city && el('p', { class: 'stop-city' }, icon('pin'), el('span', { text: chapter.city })),
+      el('h3', { text: chapter.title }),
+      el('p', { text: chapter.text }),
+    ),
   ))
 })
+setText('[data-date-full]', wedding.date)
 const photos = wedding.photos || []
 $('story-block').hidden = !story.length
 $('gallery-block').hidden = !photos.length
@@ -231,8 +297,11 @@ function show(index) {
   $('viewer-pos').textContent = current + 1 + ' / ' + photos.length
 }
 photos.forEach((photo, index) => {
-  const link = el('a', { class: 'photo', href: asset(photo.file), 'aria-label': 'Lihat foto: ' + photo.alt, style: '--tilt:' + ([-3, 2, -1.5, 3, -2.5, 1][index % 6]) + 'deg' },
+  // First photo is featured full-width; the last one too when the rest would leave it alone on a row.
+  const wide = index === 0 || (index === photos.length - 1 && photos.length % 2 === 0)
+  const link = el('a', { class: 'photo' + (wide ? ' wide' : ''), href: asset(photo.file), 'aria-label': 'Lihat foto: ' + photo.alt, style: '--tilt:' + (wide ? [-1, 1][index % 2] : [-3, 2, -1.5, 3, -2.5, 1][index % 6]) + 'deg' },
     el('img', { src: asset(photo.file), alt: photo.alt, loading: 'lazy', decoding: 'async' }))
+  if (wide) link.firstChild.addEventListener('load', ({ target }) => link.classList.toggle('portrait', target.naturalHeight > target.naturalWidth), { once: true })
   link.addEventListener('click', (event) => {
     if (typeof viewer.showModal !== 'function' || event.metaKey || event.ctrlKey) return
     event.preventDefault()
@@ -257,33 +326,38 @@ const accounts = wedding.giftAccounts || []
 if (accounts.length || wedding.giftAddress) {
   $('gift').hidden = false
   $('gift-text').textContent = wedding.gift || ''
-  accounts.forEach((account) => {
-    const copy = el('button', { class: 'btn btn-ghost small copy', type: 'button', text: 'Salin', 'aria-label': 'Salin nomor ' + account.bank })
+  // Luggage tag: coloured side strip with a bag code, main panel with the details, barcode + action at the foot.
+  const tag = (index, label, caption, value, holder, action) => el('div', { class: 'tag reveal' },
+    el('div', { class: 'tag-side', 'aria-hidden': 'true' }, el('span', { text: 'BAG ' + pad(index + 1) })),
+    el('div', { class: 'tag-main' },
+      el('p', { class: 'label', text: label }),
+      el('p', { class: 'caption', text: caption }),
+      el('p', { class: 'value number', text: value }),
+      el('p', { class: 'holder', text: holder }),
+      el('div', { class: 'tag-foot' }, el('span', { class: 'barcode', 'aria-hidden': 'true' }), action),
+    ),
+  )
+  accounts.forEach((account, index) => {
+    const copy = el('button', { class: 'btn btn-ghost small copy', type: 'button', 'aria-label': 'Salin nomor ' + account.bank })
+    const setLabel = (text) => copy.replaceChildren(icon('copy'), text)
+    setLabel('Salin')
     copy.addEventListener('click', async () => {
       const digits = account.number.replace(/\s+/g, '')
       try {
         await navigator.clipboard.writeText(digits)
-        copy.textContent = 'Tersalin ✓'
+        setLabel('Tersalin ✓')
+        copy.classList.add('done')
       } catch {
-        copy.textContent = digits
+        setLabel(digits)
       }
-      setTimeout(() => { copy.textContent = 'Salin' }, 2200)
+      setTimeout(() => { setLabel('Salin'); copy.classList.remove('done') }, 2200)
     })
-    $('gift-list').append(el('div', { class: 'tag reveal' },
-      el('p', { class: 'label', text: 'BAGGAGE TAG' }),
-      el('p', { class: 'caption', text: account.bank }),
-      el('p', { class: 'value number', text: account.number }),
-      el('p', { class: 'holder', text: 'a.n. ' + account.holder }),
-      copy,
-    ))
+    $('gift-list').append(tag(index, 'BAGGAGE TAG', account.bank, account.number, 'a.n. ' + account.holder, copy))
   })
   if (wedding.giftAddress) {
-    $('gift-list').append(el('div', { class: 'tag reveal' },
-      el('p', { class: 'label', text: 'DELIVERY' }),
-      el('p', { class: 'caption', text: 'Alamat kirim kado' }),
-      el('p', { class: 'value', text: wedding.giftAddress.recipient }),
-      el('p', { class: 'holder', text: wedding.giftAddress.address }),
-    ))
+    const delivery = tag(accounts.length, 'DELIVERY', 'Alamat kirim kado', wedding.giftAddress.recipient, wedding.giftAddress.address, null)
+    delivery.classList.add('delivery')
+    $('gift-list').append(delivery)
   }
 }
 
@@ -300,7 +374,7 @@ const store = {
   write(list) { localStorage.setItem(storeKey, JSON.stringify(list.slice(0, 50))) },
 }
 if (wedding.replyBy) {
-  $('reply-by').textContent = 'Mohon konfirmasi sebelum ' + wedding.replyBy + '.'
+  $('reply-by').append(icon('cal'), el('span', { text: 'Mohon konfirmasi sebelum ' + wedding.replyBy + '.' }))
   $('reply-by').hidden = false
 }
 if (guest) form.elements.name.value = guest.slice(0, 60)
@@ -326,15 +400,18 @@ function renderLog({ wishes, counts }) {
   const list = $('wishes')
   list.replaceChildren()
   const shown = wishes.filter((w) => w.msg).slice(0, 50)
-  if (!shown.length) list.append(el('li', { class: 'empty', text: 'Belum ada ucapan. Jadilah yang pertama.' }))
+  if (!shown.length) list.append(el('li', { class: 'empty' }, icon('plane'), el('span', { text: 'Belum ada ucapan. Jadilah yang pertama.' })))
   for (const wish of shown) {
-    list.append(el('li', {},
-      el('p', { class: 'log-head' },
-        el('time', { dateTime: new Date(wish.ts).toISOString(), title: ago(wish.ts), text: logTime(wish.ts) }),
-        el('strong', { text: wish.name }),
-        el('span', { class: 'badge ' + wish.att, text: attLabel[wish.att] || '' }),
+    list.append(el('li', { class: 'att-' + wish.att },
+      el('span', { class: 'avatar', 'aria-hidden': 'true', text: Array.from(String(wish.name).trim())[0]?.toUpperCase() || '?' }),
+      el('div', { class: 'log-body' },
+        el('p', { class: 'log-head' },
+          el('strong', { text: wish.name }),
+          el('span', { class: 'badge ' + wish.att, text: attLabel[wish.att] || '' }),
+        ),
+        el('p', { class: 'log-msg', text: wish.msg }),
+        el('time', { dateTime: new Date(wish.ts).toISOString(), title: logTime(wish.ts), text: ago(wish.ts) }),
       ),
-      el('p', { text: wish.msg }),
     ))
   }
 }
@@ -373,6 +450,8 @@ const syncGuests = () => {
   $('guests-field').hidden = att === 'n'
 }
 form.addEventListener('change', syncGuests)
+const syncCount = () => { $('msg-len').textContent = form.elements.msg.value.length }
+form.elements.msg.addEventListener('input', syncCount)
 
 function validate() {
   const name = form.elements.name.value.trim()
@@ -413,6 +492,7 @@ if (!endpoint && !wedding.demo) {
       status.className = 'status ok'
       status.textContent = 'Terima kasih, konfirmasi Anda sudah kami terima.'
       form.elements.msg.value = ''
+      syncCount()
       showStamp(true)
       loadLog()
     } catch {
