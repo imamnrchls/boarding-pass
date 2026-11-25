@@ -78,8 +78,22 @@
   <main id="isi">
     <!-- 3 · Pembuka & Crew -->
     <section class="section" id="crew" tabindex="-1" aria-labelledby="crew-title">
-      <blockquote class="quote-card reveal"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
-      <p class="lede" id="invite-line"></p>
+      <div class="announce reveal">
+        <p class="announce-head"><span class="label">CABIN ANNOUNCEMENT</span><span class="caption">Pengumuman</span></p>
+        <blockquote class="quote-card"><p id="quote-text"></p><cite id="quote-source"></cite></blockquote>
+      </div>
+      <div class="invite reveal">
+        <p class="divider" aria-hidden="true"><svg><use href="#i-plane"/></svg></p>
+        <p class="lede" id="invite-line"></p>
+      </div>
+      <svg class="wings" viewBox="0 0 120 32" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M46 14 C 34 9, 18 8, 3 10"/><path d="M46 18 C 34 14, 20 14, 9 16"/><path d="M46 22 C 36 19, 25 20, 16 22"/>
+          <path d="M74 14 C 86 9, 102 8, 117 10"/><path d="M74 18 C 86 14, 100 14, 111 16"/><path d="M74 22 C 84 19, 95 20, 104 22"/>
+          <circle cx="60" cy="17" r="11"/>
+        </g>
+        <use href="#i-plane" x="52" y="9" width="16" height="16"/>
+      </svg>
       <h2 class="title" id="crew-title"><span class="label">THE CREW</span><span class="caption">Mempelai</span></h2>
       <div class="crew" id="couple"></div>
       <a class="btn btn-ghost" href="#itinerary"><svg class="ico"><use href="#i-pin"/></svg>Lihat Jadwal &amp; Lokasi</a>

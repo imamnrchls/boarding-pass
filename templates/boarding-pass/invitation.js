@@ -77,15 +77,18 @@ const roleOf = (partner, index) => partner.role === 'groom' || partner.role === 
 const crew = wedding.couple.map((partner, index) => ({ ...partner, role: roleOf(partner, index) }))
   .sort((a, b) => (a.role === 'groom' ? 0 : 1) - (b.role === 'groom' ? 0 : 1))
 const showPhotos = wedding.showCouplePhotos !== false
-for (const partner of crew) {
+crew.forEach((partner, index) => {
   const groom = partner.role === 'groom'
   const monogram = Array.from(partner.name.trim())[0]?.toUpperCase() || ''
   const badge = el('figure', { class: 'crew-photo' })
   if (showPhotos && partner.portrait) badge.append(el('img', { src: asset(partner.portrait), alt: partner.name, loading: 'lazy', width: 300, height: 428 }))
   else badge.append(el('span', { class: 'monogram', text: monogram, 'aria-hidden': 'true' }))
+  const crewId = initials + '-0' + (index + 1)
   const card = el('article', { class: 'crew-card reveal ' + partner.role },
-    el('p', { class: 'airline', text: initials + ' AIRLINES · CREW ID' }),
+    el('p', { class: 'airline', 'aria-hidden': 'true' }, el('span', { text: initials + ' AIRLINES' }), el('span', { text: 'CREW ID' })),
     badge,
+    // Epaulette: four bars for the captain, three for the co-pilot (decorative).
+    el('span', { class: 'bars', 'aria-hidden': 'true' }, ...Array.from({ length: groom ? 4 : 3 }, () => el('i'))),
     el('p', { class: 'label', text: groom ? 'CAPTAIN' : 'CO-PILOT' }),
     el('p', { class: 'caption', text: groom ? 'Mempelai Pria' : 'Mempelai Wanita' }),
     el('h3', { text: partner.name }),
@@ -97,8 +100,10 @@ for (const partner of crew) {
     link.append(icon('camera'), '@' + handle)
     card.append(link)
   }
+  card.append(el('p', { class: 'crew-foot', 'aria-hidden': 'true' }, el('span', { class: 'barcode' }), el('span', { text: crewId })))
+  if (index > 0) $('couple').append(el('p', { class: 'crew-join', 'aria-hidden': 'true', text: '&' }))
   $('couple').append(card)
-}
+})
 
 /* ---------- itinerary ---------- */
 $('route-from').textContent = route.from
