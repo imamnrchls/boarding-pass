@@ -93,7 +93,11 @@ crew.forEach((partner) => {
     photo,
     el('p', { class: 'label', text: groom ? 'CAPTAIN' : 'CO-PILOT' }),
     el('p', { class: 'caption', text: groom ? 'Mempelai Pria' : 'Mempelai Wanita' }),
-    el('h3', { text: partner.name }),
+    // First name large, the rest small and tracked; the full name stays one heading for screen readers.
+    el('h3', { 'aria-label': partner.name },
+      el('span', { class: 'first', text: partner.name.trim().split(/\s+/)[0] }),
+      el('span', { class: 'rest', text: partner.name.trim().split(/\s+/).slice(1).join(' ') }),
+    ),
     partner.family && el('p', { class: 'family', text: partner.family }),
   )
   const handle = partner.instagram?.replace(/^@/, '').trim()
@@ -104,6 +108,7 @@ crew.forEach((partner) => {
   }
   $('couple').append(card)
 })
+if (crew.length === 2) $('couple').firstChild.append(el('span', { class: 'crew-amp', 'aria-hidden': 'true', text: '&' }))
 
 /* ---------- itinerary ---------- */
 $('route-from').textContent = route.from
@@ -208,7 +213,7 @@ if (dress && (dress.note || dress.colors?.length)) {
   const colors = (dress.colors || []).map((item) => typeof item === 'string' ? { color: item } : item)
     .filter((item) => /^#[0-9a-f]{3,8}$/i.test(item?.color || ''))
   colors.forEach((item, index) => {
-    $('dress-colors').append(el('li', { style: '--c:' + item.color },
+    $('dress-colors').append(el('li', { style: '--c:' + item.color + ';--r:' + [-4, 3, -2, 4, -3][index % 5] + 'deg' },
       el('span', { class: 'chip-color', 'aria-hidden': 'true' }),
       el('span', { class: item.name ? 'chip-name' : 'sr-only', text: item.name || 'Warna ' + (index + 1) }),
     ))
