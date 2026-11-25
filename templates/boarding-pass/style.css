@@ -96,16 +96,20 @@ a { color: var(--primary-text); }
 /* ---------- 1 · cover ---------- */
 .cover {
   position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: var(--gutter);
-  /* Placeholder sampai aset A-01 (sky-cover.webp) tersedia */
-  background: linear-gradient(180deg, #E3EDFB 0%, #EAF1FB 62%, #FCE7D6 100%);
+  background: linear-gradient(180deg, #E3EDFB 0%, var(--bg) 62%, #FCE7D6 100%);
 }
 .cover-sky { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.cover-sky::before, .cover-sky::after { /* soft CSS clouds near the edges */
-  content: ""; position: absolute; border-radius: 999px; background: #fff; opacity: .75;
-  box-shadow: 40px -14px 0 6px #fff, 90px 4px 0 -4px #fff;
+.cover-sky::before {
+  content: ""; position: absolute; inset: 0;
+  background: url('./assets/sky-cover.webp') center / cover no-repeat;
 }
-.cover-sky::before { width: 90px; height: 30px; top: 9%; left: 6%; }
-.cover-sky::after { width: 70px; height: 24px; bottom: 11%; right: 26%; opacity: .6; }
+@media (min-width: 48rem) {
+  .cover-sky::before {
+    width: min(100%, 56.25vh);
+    margin-inline: auto;
+    mask-image: linear-gradient(to right, transparent, #000 21%, #000 79%, transparent);
+  }
+}
 .cover-plane { position: absolute; width: 30px; height: 30px; top: 13%; right: 12%; color: var(--primary); opacity: .6; transform: rotate(45deg); }
 body:not(.opened) .cover-plane { animation: drift 9s ease-in-out infinite alternate; }
 @keyframes drift { from { transform: translate(0, 0) rotate(45deg); } to { transform: translate(-26px, 14px) rotate(45deg); } }
