@@ -593,6 +593,9 @@ body.motion .closing.in .closing-plane { animation: takeoff 1.6s ease-in forward
 .closing-names .amp { color: var(--accent); display: inline-block; transform: scale(.85); } /* large text on the dark card: ~6:1 */
 .closing-date { font: 600 .82rem var(--font-data); letter-spacing: .08em; color: #FFD9B8; padding-top: .7rem; border-top: 1px dashed rgba(255,255,255,.25); }
 .credit { text-align: center; padding: 1rem var(--gutter) 5rem; font-size: .8rem; color: var(--ink-muted); }
+.credit .lk-brand { display: inline-block; margin-top: .9rem; color: var(--ink-muted); transition: color .2s; }
+.credit .lk-brand:hover { color: var(--primary); }
+.credit .lk-logo { display: block; width: 118px; height: auto; }
 
 /* music */
 .music {
