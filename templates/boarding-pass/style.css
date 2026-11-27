@@ -598,6 +598,7 @@ body.motion .closing.in .closing-plane { animation: takeoff 1.6s ease-in forward
 .credit .lk-brand { display: inline-block; margin-top: .9rem; color: var(--ink-muted); transition: color .2s; }
 .credit .lk-brand:hover { color: var(--primary); }
 .credit .lk-logo { display: block; width: 118px; height: auto; }
+.credit .lk-url { display: block; margin-top: 5px; font-size: 10px; letter-spacing: .14em; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 
 /* music */
 .music {
